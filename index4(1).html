@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erovoutika — Automation & Robotics</title>
+    <link rel="preconnect" href="https://fonts.cdnfonts.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/ica-rubrik-black');
+        @import url('https://fonts.cdnfonts.com/css/poppins');
+
+        /* ═══════════════════════════════════════════
+           DESIGN TOKENS — DARK MODE (default)
+        ═══════════════════════════════════════════ */
+        :root {
+            /* Surfaces */
+            --bg:             #0f172a;
+            --bg-secondary:   #131d35;
+            --bg-tertiary:    #1e2a45;
+            --surface:        #162036;
+            --surface-high:   #1e2d4a;
+
+            /* Text */
+            --text:           #e8eaf6;
+            --text-muted:     #8fa3c0;
+            --text-dim:       #5d7290;
+
+            /* Brand */
+            --primary:        #bfc2ff;
+            --primary-deep:   #4951c3;
+            --accent:         #7981f5;
+            --accent-hov:     #9ca3ff;
+
+            /* UI States */
+            --nav-bg:         rgba(15,23,42,0.88);
+            --nav-border:     rgba(191,194,255,0.08);
+            --card-bg:        rgba(255,255,255,0.04);
+            --card-border:    rgba(255,255,255,0.07);
+            --input-bg:       rgba(255,255,255,0.05);
+            --input-border:   rgba(191,194,255,0.18);
+            --outline:        rgba(255,255,255,0.12);
+
+            /* Footer */
+            --footer-bg:      #080d1a;
+            --footer-border:  rgba(255,255,255,0.06);
+
+            /* Dropdown */
+            --dropdown-bg:    #1a2540;
+            --dropdown-hover: rgba(191,194,255,0.1);
+
+            /* Progress */
+            --scroll-bar:     #7981f5;
+
+            /* Ghost text */
+            --ghost:          rgba(255,255,255,0.015);
+
+            /* Stack cards */
+            --sc1: linear-gradient(140deg,#1c3a6e,#0f2040);
+            --sc2: linear-gradient(140deg,#2b1a6e,#160f40);
+            --sc3: linear-gradient(140deg,#1a3a55,#0f2030);
+            --sc4: linear-gradient(140deg,#3b1a60,#1e0f35);
+            --sc5: linear-gradient(140deg,#1a3a44,#0d1e24);
+            --sc6: linear-gradient(140deg,#0f2060,#0a1238);
+            /* Extended muted palette — cycles for cards 7+ */
+            --sc7:  linear-gradient(140deg,#2a2050,#150f30);
+            --sc8:  linear-gradient(140deg,#1f3550,#0f1d2e);
+            --sc9:  linear-gradient(140deg,#3a1f4a,#1e0f28);
+            --sc10: linear-gradient(140deg,#1f4444,#0e2424);
+            --sc11: linear-gradient(140deg,#2e2a55,#171432);
+            --sc12: linear-gradient(140deg,#3a2050,#1d0f2c);
+        }
+
+        /* ── LIGHT MODE ── */
+        body.light {
+            --bg:             #faf8ff;
+            --bg-secondary:   #f1f3ff;
+            --bg-tertiary:    #e9edff;
+            --surface:        #ffffff;
+            --surface-high:   #f1f3ff;
+
+            --text:           #151b29;
+            --text-muted:     #454653;
+            --text-dim:       #767684;
+
+            --primary:        #00004c;
+            --primary-deep:   #00008b;
+            --accent:         #00008b;
+            --accent-hov:     #0000aa;
+
+            --nav-bg:         rgba(250,248,255,0.92);
+            --nav-border:     rgba(0,0,139,0.1);
+            --card-bg:        rgba(0,0,139,0.03);
+            --card-border:    rgba(0,0,139,0.1);
+            --input-bg:       rgba(0,0,139,0.04);
+            --input-border:   rgba(0,0,139,0.2);
+            --outline:        rgba(0,0,139,0.15);
+
+            --footer-bg:      #e9edff;
+            --footer-border:  rgba(0,0,139,0.12);
+
+            --dropdown-bg:    #ffffff;
+            --dropdown-hover: rgba(0,0,139,0.06);
+
+            --scroll-bar:     #00008b;
+            --ghost:          rgba(0,0,139,0.03);
+
+            --sc1: linear-gradient(140deg,#e4ebf7,#cdd8f0);
+            --sc2: linear-gradient(140deg,#e4e0f7,#cdc8f0);
+            --sc3: linear-gradient(140deg,#daeaf7,#c3d8f0);
+            --sc4: linear-gradient(140deg,#ede4f7,#dccdf0);
+            --sc5: linear-gradient(140deg,#d5eaf7,#bfd6f0);
+            --sc6: linear-gradient(140deg,#e0e4f7,#c8ccf0);
+            /* Extended muted palette — cycles for cards 7+ */
+            --sc7:  linear-gradient(140deg,#ebe4f7,#d5c8f0);
+            --sc8:  linear-gradient(140deg,#dbe4f7,#c5cef0);
+            --sc9:  linear-gradient(140deg,#f0e0f0,#e0c5e8);
+            --sc10: linear-gradient(140deg,#daf0eb,#bee5db);
+            --sc11: linear-gradient(140deg,#e6e4f5,#cfcce8);
+            --sc12: linear-gradient(140deg,#efe1f0,#dbc4e3);
+        }
+
+        /* ═══════════════════════════════════════════
+           GLOBAL
+        ═══════════════════════════════════════════ */
+        *, *::before, *::after {
+            margin: 0; padding: 0; box-sizing: border-box;
+            transition: background-color 0.35s ease, color 0.35s ease,
+                        border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', 'Poppins', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+            line-height: 1.6;
+        }
+
+        @media (pointer: coarse) { body { cursor: auto; } }
+
+        img { max-width: 100%; height: auto; display: block; }
+        a { text-decoration: none; color: inherit; }
+
+        /* ═══════════════════════════════════════════
+           CUSTOM CURSOR
+        ═══════════════════════════════════════════ */
+        #cursor-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--accent); position: fixed;
+            pointer-events: none; z-index: 99999;
+            transform: translate(-50%,-50%);
+            transition: width 0.2s, height 0.2s, background 0.2s;
+        }
+        #cursor-ring {
+            width: 32px; height: 32px; border-radius: 50%;
+            border: 1.5px solid var(--accent); position: fixed;
+            pointer-events: none; z-index: 99998;
+            transform: translate(-50%,-50%); opacity: 0.5;
+            transition: width 0.25s, height 0.25s, opacity 0.2s;
+        }
+        body.cursor-hover #cursor-dot { width: 12px; height: 12px; }
+        body.cursor-hover #cursor-ring { width: 48px; height: 48px; opacity: 0.25; }
+
+        @media (max-width: 900px) { #cursor-dot, #cursor-ring { display: none; } }
+
+        /* ═══════════════════════════════════════════
+           SCROLL PROGRESS BAR
+        ═══════════════════════════════════════════ */
+        #scroll-bar {
+            position: fixed; top: 0; left: 0;
+            height: 3px; width: 0%;
+            background: var(--scroll-bar);
+            z-index: 10001; border-radius: 0 2px 2px 0;
+            transition: width 0.1s linear, background 0.35s;
+        }
+
+        /* ═══════════════════════════════════════════
+           HEADER & NAVIGATION
+        ═══════════════════════════════════════════ */
+        header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            display: flex; align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 3rem;
+            background: var(--nav-bg);
+            backdrop-filter: blur(14px) saturate(1.4);
+            border-bottom: 1px solid var(--nav-border);
+            gap: 1.5rem;
+        }
+
+        /* Logo */
+        .logo-container {
+            flex-shrink: 0;
+            display: flex; align-items: center;
+        }
+        .logo-container img {
+            height: 38px; width: auto;
+            transition: opacity 0.3s ease;
+        }
+        .logo-container img:hover { opacity: 0.85; }
+        .logo-dark  { display: block; }
+        .logo-light { display: none; }
+        body.light .logo-dark  { display: none; }
+        body.light .logo-light { display: block; }
+
+        /* Main nav — shifted right via margin-left: auto */
+        .main-nav {
+            display: flex; gap: 2rem; list-style: none;
+            margin-left: auto;
+        }
+        .main-nav a {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem; font-weight: 500;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            color: var(--text-muted);
+            position: relative; padding-bottom: 3px;
+            transition: color 0.3s;
+        }
+        .main-nav a::after {
+            content: ''; position: absolute;
+            bottom: 0; left: 0; width: 0; height: 1.5px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        .main-nav a:hover { color: var(--accent); }
+        .main-nav a:hover::after { width: 100%; }
+        .main-nav a.active { color: var(--accent); }
+        .main-nav a.active::after { width: 100%; }
+
+        /* Header controls */
+        .header-controls {
+            display: flex; align-items: center; gap: 0.75rem;
+            flex-shrink: 0; position: relative;
+        }
+
+        /* Theme toggle icon button */
+        .icon-btn {
+            background: none; border: none;
+            color: var(--text-muted); font-size: 1.2rem;
+            cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            width: 36px; height: 36px;
+            border-radius: 8px; padding: 0;
+            transition: color 0.3s, background 0.3s;
+        }
+        .icon-btn:hover {
+            color: var(--accent);
+            background: var(--card-bg);
+        }
+        .icon-btn svg { width: 20px; height: 20px; pointer-events: none; }
+
+        /* Hamburger dropdown */
+        .menu-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+        }
+        .menu-btn:hover {
+            background: var(--accent);
+            color: #fff !important;
+            border-color: var(--accent);
+        }
+
+        .dropdown-menu {
+            position: absolute; top: calc(100% + 12px); right: 0;
+            min-width: 200px;
+            background: var(--dropdown-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+            padding: 0.5rem;
+            opacity: 0; visibility: hidden;
+            transform: translateY(-8px);
+            transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s;
+            z-index: 2000;
+        }
+        body.light .dropdown-menu {
+            box-shadow: 0 12px 40px rgba(0,0,139,0.1);
+        }
+        .dropdown-menu.open {
+            opacity: 1; visibility: visible; transform: translateY(0);
+        }
+        .dropdown-menu a {
+            display: flex; align-items: center; gap: 0.6rem;
+            padding: 0.6rem 0.85rem;
+            font-size: 0.82rem; font-weight: 500;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            border-radius: 8px;
+            transition: background 0.18s, color 0.18s;
+        }
+        .dropdown-menu a:hover {
+            background: var(--dropdown-hover);
+            color: var(--accent);
+        }
+        .dropdown-menu a .dm-icon {
+            font-size: 0.95rem; width: 20px; text-align: center; flex-shrink: 0;
+        }
+
+        /* Divider in dropdown */
+        .dropdown-divider {
+            height: 1px; background: var(--card-border);
+            margin: 0.35rem 0.5rem;
+        }
+
+        /* ═══════════════════════════════════════════
+           SECTION UTILITIES
+        ═══════════════════════════════════════════ */
+        .section-tag {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem; font-weight: 500;
+            letter-spacing: 3px; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 1rem;
+            display: inline-block; position: relative; overflow: hidden;
+        }
+        .section-tag::before {
+            content: ''; position: absolute; left: 0; bottom: 0;
+            width: 100%; height: 1px; background: var(--accent);
+            transform: scaleX(0); transform-origin: left;
+            transition: transform 0.4s ease 0.2s;
+        }
+        .section-tag.visible::before { transform: scaleX(1); }
+
+        .section-heading {
+            font-family: 'Space Grotesk', 'ICA Rubrik', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 700; line-height: 1.15;
+            letter-spacing: -0.02em;
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0; transform: translateY(28px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-left {
+            opacity: 0; transform: translateX(-32px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+        .reveal-left.visible { opacity: 1; transform: translateX(0); }
+        .reveal-right {
+            opacity: 0; transform: translateX(32px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+        .reveal-right.visible { opacity: 1; transform: translateX(0); }
+        .delay-1 { transition-delay: 0.1s !important; }
+        .delay-2 { transition-delay: 0.2s !important; }
+        .delay-3 { transition-delay: 0.3s !important; }
+        .delay-4 { transition-delay: 0.4s !important; }
+
+        /* Button */
+        .btn {
+            display: inline-block; padding: 0.8rem 2rem;
+            background: var(--accent); color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem; font-weight: 500;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            border-radius: 6px; border: none; cursor: pointer;
+            position: relative; overflow: hidden;
+            transition: background 0.3s, transform 0.25s, box-shadow 0.3s;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+        }
+        .btn:hover {
+            background: var(--accent-hov);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn .ripple {
+            position: absolute; border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: scale(0); animation: ripple-anim 0.55s linear;
+            pointer-events: none;
+        }
+        @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+        /* ═══════════════════════════════════════════
+           HERO SECTION
+        ═══════════════════════════════════════════ */
+        .hero {
+            min-height: 100vh;
+            display: grid; grid-template-columns: 1fr 1fr;
+            align-items: center; padding: 6rem 4rem 4rem;
+            position: relative; overflow: hidden;
+            background: var(--bg);
+        }
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse at 70% 50%, rgba(73,81,195,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(0,0,139,0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        body.light .hero::before {
+            background:
+                radial-gradient(ellipse at 70% 50%, rgba(0,0,139,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(73,81,195,0.05) 0%, transparent 50%);
+        }
+        .hero::after {
+            content: ''; position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+            background-size: 60px 60px; pointer-events: none;
+        }
+        body.light .hero::after {
+            background-image:
+                linear-gradient(rgba(0,0,139,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,139,0.04) 1px, transparent 1px);
+        }
+
+        .hero-text { position: relative; z-index: 2; }
+        .hero-eyebrow {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem; font-weight: 500;
+            letter-spacing: 3px; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 1.2rem;
+            display: flex; align-items: center; gap: 0.7rem;
+        }
+        .hero-eyebrow::before {
+            content: ''; width: 30px; height: 1.5px; background: var(--accent);
+        }
+
+        .hero-title {
+            font-family: 'ICA Rubrik Black', 'Space Grotesk', serif;
+            font-size: clamp(3rem, 7vw, 6rem);
+            line-height: 1.0; letter-spacing: -0.02em;
+            color: var(--text); margin-bottom: 1.5rem;
+        }
+        .hero-title .gradient-word {
+            background: linear-gradient(135deg, var(--accent) 0%, #a8b0ff 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        body.light .hero-title .gradient-word {
+            background: linear-gradient(135deg, #00008b 0%, #4951c3 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-body {
+            font-size: 1rem; color: var(--text-muted); line-height: 1.8;
+            max-width: 460px; margin-bottom: 2rem;
+        }
+
+        .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .btn-outline {
+            display: inline-block; padding: 0.8rem 2rem;
+            background: transparent;
+            border: 1.5px solid var(--outline);
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem; font-weight: 500;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            border-radius: 6px; cursor: pointer;
+            transition: border-color 0.3s, color 0.3s, background 0.3s, transform 0.25s;
+        }
+        .btn-outline:hover {
+            border-color: var(--accent); color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* Hero image mosaic */
+        .hero-visual { position: relative; z-index: 2; }
+        .hero-mosaic {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 240px 160px;
+            gap: 10px; border-radius: 16px; overflow: hidden;
+        }
+        .hero-mosaic .mosaic-item {
+            overflow: hidden; position: relative;
+        }
+        .hero-mosaic .mosaic-item:nth-child(1) {
+            grid-row: 1 / 2; grid-column: 1 / 2;
+        }
+        .hero-mosaic .mosaic-item:nth-child(2) {
+            grid-row: 1 / 3; grid-column: 2 / 3;
+        }
+        .hero-mosaic .mosaic-item:nth-child(3) {
+            grid-row: 2 / 3; grid-column: 1 / 2;
+        }
+        .hero-mosaic .mosaic-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: brightness(0.82) saturate(0.85);
+            transition: transform 0.55s ease, filter 0.55s ease;
+        }
+        .hero-mosaic .mosaic-item:hover img {
+            transform: scale(1.07);
+            filter: brightness(1) saturate(1.05);
+        }
+        .hero-mosaic .mosaic-item::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.3));
+            pointer-events: none;
+        }
+
+        /* Floating badge */
+        .hero-badge {
+            position: absolute; bottom: 1.5rem; left: -1.5rem;
+            background: var(--nav-bg); backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 12px; padding: 1rem 1.2rem;
+            display: flex; align-items: center; gap: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            animation: floatBadge 4s ease-in-out infinite;
+            z-index: 10;
+        }
+        @keyframes floatBadge {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .hero-badge .badge-icon { font-size: 1.5rem; }
+        .hero-badge-text { font-size: 0.75rem; font-weight: 600; color: var(--text); }
+        .hero-badge-sub { font-size: 0.65rem; color: var(--text-muted); margin-top: 1px; }
+
+        .scroll-hint {
+            position: absolute; bottom: 2rem; left: 50%;
+            transform: translateX(-50%); z-index: 10;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 0.4rem; opacity: 0.4;
+            animation: bounce 2.5s ease-in-out infinite;
+            font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .scroll-hint::after {
+            content: ''; width: 1px; height: 36px;
+            background: linear-gradient(to bottom, var(--text-muted), transparent);
+        }
+        @keyframes bounce {
+            0%,100% { transform: translateX(-50%) translateY(0); }
+            50%      { transform: translateX(-50%) translateY(8px); }
+        }
+
+        /* ═══════════════════════════════════════════
+           ABOUT
+        ═══════════════════════════════════════════ */
+        .about {
+            padding: 9rem 4rem;
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 6rem; align-items: center;
+            background: var(--bg-secondary); position: relative; overflow: hidden;
+        }
+        .about::before {
+            content: 'ERO'; position: absolute;
+            font-family: 'ICA Rubrik Black', serif; font-size: 28vw;
+            color: var(--ghost); top: 50%; left: -5%;
+            transform: translateY(-50%);
+            pointer-events: none; white-space: nowrap; line-height: 1;
+            user-select: none;
+        }
+        .about-text { position: relative; z-index: 1; }
+        .about-text h2 {
+            font-family: 'Space Grotesk', 'ICA Rubrik Black', sans-serif;
+            font-size: clamp(2rem,4.5vw,3.8rem); font-weight: 700;
+            line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1.5rem;
+        }
+        .about-text p {
+            color: var(--text-muted); line-height: 1.9;
+            font-size: 0.95rem; margin-bottom: 1rem;
+        }
+        .about-image { position: relative; }
+        .about-image img {
+            width: 100%; aspect-ratio: 4/5; object-fit: cover;
+            border-radius: 12px; display: block;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .about-image:hover img {
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+        .about-image::before {
+            content: ''; position: absolute;
+            top: -16px; left: -16px; right: 16px; bottom: 16px;
+            border: 1.5px solid rgba(121,129,245,0.35);
+            border-radius: 12px; z-index: -1;
+            transition: transform 0.3s ease;
+        }
+        body.light .about-image::before { border-color: rgba(0,0,139,0.3); }
+        .about-image:hover::before { transform: translate(-4px,-4px); }
+
+        /* ═══════════════════════════════════════════
+           STACKED CARDS — SERVICES
+        ═══════════════════════════════════════════ */
+        .stack-area {
+            width: 100%; height: 400vh;
+            position: relative; background: var(--bg);
+            display: flex;
+        }
+        .stack-left {
+            height: 100vh; flex-basis: 50%;
+            position: sticky; top: 0;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; padding: 4rem; box-sizing: border-box;
+        }
+        .stack-title {
+            width: 100%; max-width: 420px;
+            font-family: 'Space Grotesk', 'ICA Rubrik Black', sans-serif;
+            font-size: clamp(2.8rem,5vw,4.8rem); font-weight: 700;
+            line-height: 1.0; letter-spacing: -0.02em;
+            color: var(--text); margin-bottom: 1.2rem;
+        }
+        .stack-sub {
+            max-width: 400px; font-size: 0.92rem;
+            color: var(--text-muted); line-height: 1.8; margin-bottom: 0.5rem;
+        }
+        .stack-right { height: 100vh; flex-basis: 50%; position: sticky; top: 0; }
+
+        .scard {
+            width: 340px; height: 420px; border-radius: 20px;
+            position: absolute;
+            top: calc(50% - 210px); left: calc(50% - 170px);
+            transition: transform 0.5s ease-in-out, box-shadow 0.3s;
+            box-sizing: border-box; padding: 2.5rem;
+            display: flex; flex-direction: column; justify-content: space-between;
+            border: 1px solid rgba(255,255,255,0.08);
+            transform-style: preserve-3d; will-change: transform;
+        }
+        .scard:nth-child(1) { background: var(--sc1); }
+        .scard:nth-child(2) { background: var(--sc2); }
+        .scard:nth-child(3) { background: var(--sc3); }
+        .scard:nth-child(4) { background: var(--sc4); }
+        .scard:nth-child(5) { background: var(--sc5); }
+        .scard:nth-child(6) { background: var(--sc6); }
+
+        /* Palette classes — used by the CMS for cards 7+ and also for slider items.
+           They cycle through 12 muted gradients so newly added cards never look
+           flat in either theme. */
+        .scard-c0  { background: var(--sc1); }
+        .scard-c1  { background: var(--sc2); }
+        .scard-c2  { background: var(--sc3); }
+        .scard-c3  { background: var(--sc4); }
+        .scard-c4  { background: var(--sc5); }
+        .scard-c5  { background: var(--sc6); }
+        .scard-c6  { background: var(--sc7); }
+        .scard-c7  { background: var(--sc8); }
+        .scard-c8  { background: var(--sc9); }
+        .scard-c9  { background: var(--sc10); }
+        .scard-c10 { background: var(--sc11); }
+        .scard-c11 { background: var(--sc12); }
+
+        body.light .scard {
+            border: 1px solid rgba(0,0,139,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,139,0.06);
+        }
+        body:not(.light) .scard {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .scard.away { transform-origin: bottom left; }
+        .scard-icon { font-size: 2.2rem; line-height: 1; }
+        .scard-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.68rem; font-weight: 600; letter-spacing: 3px;
+            text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 0.3rem;
+        }
+        .scard-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem; font-weight: 700;
+            line-height: 1.1; color: #fff; letter-spacing: -0.01em;
+        }
+        .scard-body { font-size: 0.85rem; line-height: 1.7; color: rgba(255,255,255,0.65); }
+        body.light .scard-sub { color: rgba(21,27,41,0.5); }
+        body.light .scard-title { color: #111827; }
+        body.light .scard-body { color: rgba(21,27,41,0.8); }
+
+        /* ═══════════════════════════════════════════
+           SERVICES — CARD SLIDER (alternate display mode)
+           Activated by erovoutika-cms.js when sections/services.displayMode === 'slider'.
+           The .stack-right node is hidden and #cardSlider is shown in its place,
+           inside the same .stack-area so the section layout is unchanged.
+        ═══════════════════════════════════════════ */
+        .scard-slider {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .scard-slider .sl-item {
+            position: absolute;
+            width: 280px;
+            height: 380px;
+            border-radius: 20px;
+            padding: 2.2rem;
+            box-sizing: border-box;
+            top: calc(50% - 190px);
+            left: calc(50% - 140px);
+            transition: transform 0.5s cubic-bezier(0.4,0,0.2,1),
+                        opacity 0.5s ease,
+                        filter 0.5s ease;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            will-change: transform, opacity, filter;
+        }
+        body.light .scard-slider .sl-item {
+            border: 1px solid rgba(0,0,139,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,139,0.06);
+        }
+        .sl-icon { font-size: 2rem; line-height: 1; }
+        .sl-sub {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.65rem; font-weight: 600; letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.45);
+        }
+        .sl-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem; font-weight: 700;
+            line-height: 1.15; color: #fff; letter-spacing: -0.01em;
+        }
+        .sl-body { font-size: 0.82rem; line-height: 1.6; color: rgba(255,255,255,0.68); }
+        body.light .sl-sub { color: rgba(21,27,41,0.5); }
+        body.light .sl-title { color: #111827; }
+        body.light .sl-body { color: rgba(21,27,41,0.78); }
+
+        .scard-slider .sl-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            background: var(--accent);
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            z-index: 50;
+            opacity: 0.85;
+            transition: opacity 0.3s, transform 0.3s, background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            padding-bottom: 4px;
+        }
+        .scard-slider .sl-nav:hover {
+            opacity: 1;
+            background: var(--accent-hov);
+            transform: translateY(-50%) scale(1.08);
+        }
+        .scard-slider .sl-prev { left: 40px; }
+        .scard-slider .sl-next { right: 40px; }
+        @media (max-width: 768px) {
+            .scard-slider .sl-item { width: 220px; height: 340px; padding: 1.6rem; left: calc(50% - 110px); top: calc(50% - 170px); }
+            .scard-slider .sl-prev { left: 12px; }
+            .scard-slider .sl-next { right: 12px; }
+        }
+
+        /* ═══════════════════════════════════════════
+           PORTFOLIO
+        ═══════════════════════════════════════════ */
+        .portfolio { padding: 9rem 4rem; background: var(--bg-secondary); }
+        .section-header { margin-bottom: 3rem; }
+        .section-header h2 {
+            font-family: 'Space Grotesk', 'ICA Rubrik Black', sans-serif;
+            font-size: clamp(2rem,4vw,3.5rem); font-weight: 700;
+            line-height: 1.1; letter-spacing: -0.02em; margin-top: 0.4rem;
+        }
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(4,1fr);
+            grid-template-rows: 220px 220px; gap: 10px;
+        }
+        .g-item {
+            overflow: hidden; border-radius: 10px; position: relative;
+        }
+        .g-item:nth-child(1) { grid-column: 1/3; }
+        .g-item:nth-child(5) { grid-column: 3/5; }
+        .g-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.55s ease, filter 0.55s ease;
+            filter: grayscale(15%) brightness(0.8);
+        }
+        .g-item:hover img {
+            transform: scale(1.08); filter: grayscale(0%) brightness(1.05);
+        }
+        .g-item::after {
+            content: '+ View'; position: absolute; inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .g-item:hover::after { opacity: 1; }
+
+        /* ═══════════════════════════════════════════
+           AWARDS
+        ═══════════════════════════════════════════ */
+        .awards { padding: 7rem 4rem; background: var(--bg); text-align: center; }
+        .awards-grid {
+            display: flex; justify-content: center; flex-wrap: wrap;
+            gap: 3rem; margin-top: 3rem;
+        }
+        .award-item {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 1rem; max-width: 160px; cursor: default;
+        }
+        .award-img-wrap {
+            width: 100px; height: 100px;
+            border-radius: 50%; overflow: hidden;
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            display: flex; align-items: center; justify-content: center;
+            transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+        .award-item:hover .award-img-wrap {
+            border-color: var(--accent);
+            transform: scale(1.1) rotate(-2deg);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+        }
+        body.light .award-item:hover .award-img-wrap {
+            box-shadow: 0 8px 24px rgba(0,0,139,0.15);
+        }
+        .award-item img {
+            width: 80px; height: 80px; object-fit: contain;
+            filter: grayscale(30%) brightness(1.2);
+            transition: filter 0.3s;
+        }
+        .award-item:hover img { filter: grayscale(0%) brightness(1.3); }
+        body.light .award-item img { filter: grayscale(30%) brightness(0.75); }
+        body.light .award-item:hover img { filter: grayscale(0%) brightness(0.95); }
+        .award-item p {
+            font-size: 0.72rem; color: var(--text-muted);
+            line-height: 1.5; text-align: center;
+        }
+
+        /* ═══════════════════════════════════════════
+           PARTNERS MARQUEE
+        ═══════════════════════════════════════════ */
+        .partners {
+            padding: 4rem 0; background: var(--bg-secondary); overflow: hidden;
+            border-top: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--card-border);
+        }
+        .partners-label {
+            text-align: center; font-size: 0.68rem;
+            letter-spacing: 3px; text-transform: uppercase;
+            color: var(--text-muted); opacity: 0.4; margin-bottom: 2rem;
+        }
+        .marquee-wrap { overflow: hidden; }
+        .marquee-track {
+            display: flex; gap: 4rem;
+            animation: marquee 32s linear infinite;
+            width: max-content; align-items: center;
+        }
+        .marquee-track img {
+            height: 44px; width: auto; object-fit: contain;
+            filter: grayscale(100%) brightness(1.5); opacity: 0.35;
+            transition: opacity 0.3s, filter 0.3s, transform 0.3s; flex-shrink: 0;
+        }
+        .marquee-track img:hover {
+            opacity: 1; filter: grayscale(0%); transform: scale(1.1);
+        }
+        body.light .marquee-track img { filter: grayscale(100%) brightness(0.2); opacity: 0.45; }
+        body.light .marquee-track img:hover { filter: grayscale(0%); opacity: 1; }
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+
+        /* ═══════════════════════════════════════════
+           NEWS
+        ═══════════════════════════════════════════ */
+        .news { padding: 8rem 4rem; background: var(--bg); }
+        .news-grid {
+            display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+            gap: 2rem; margin-top: 2.5rem;
+        }
+        .news-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 12px; overflow: hidden;
+            transition: border-color 0.3s, transform 0.35s, box-shadow 0.35s;
+        }
+        .news-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+        }
+        body.light .news-card:hover {
+            box-shadow: 0 16px 40px rgba(0,0,139,0.1);
+        }
+        .news-card-img {
+            width: 100%; height: 195px; overflow: hidden;
+        }
+        .news-card-img img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: brightness(0.82); transition: filter 0.35s, transform 0.55s;
+        }
+        .news-card:hover .news-card-img img {
+            filter: brightness(1.0); transform: scale(1.04);
+        }
+        .news-body { padding: 1.5rem; }
+        .news-date {
+            font-size: 0.68rem; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 0.6rem;
+        }
+        .news-body h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.15rem; font-weight: 600;
+            line-height: 1.3; margin-bottom: 0.9rem; color: var(--text);
+        }
+        .read-more-link {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            font-size: 0.72rem; color: var(--accent);
+            letter-spacing: 1.5px; text-transform: uppercase;
+            font-weight: 500;
+            position: relative; padding-bottom: 2px;
+            transition: gap 0.25s;
+        }
+        .read-more-link::after {
+            content: ''; position: absolute; bottom: 0; left: 0;
+            width: 0; height: 1px; background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        .read-more-link:hover::after { width: 100%; }
+        .read-more-link:hover { gap: 0.65rem; }
+
+        /* ═══════════════════════════════════════════
+           CONTACT
+        ═══════════════════════════════════════════ */
+        .contact-section {
+            padding: 8rem 4rem; background: var(--bg-secondary);
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 6rem; align-items: center;
+        }
+        .contact-info h2 {
+            font-family: 'Space Grotesk', 'ICA Rubrik Black', sans-serif;
+            font-size: clamp(2rem,4vw,3.2rem); font-weight: 700;
+            letter-spacing: -0.02em; margin-bottom: 2rem; line-height: 1.2;
+        }
+        .contact-detail { display: flex; flex-direction: column; gap: 1.4rem; }
+        .contact-detail p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.7; }
+        .contact-detail strong {
+            color: var(--accent); font-size: 0.66rem;
+            letter-spacing: 2.5px; text-transform: uppercase;
+            display: block; margin-bottom: 0.3rem; font-weight: 600;
+        }
+
+        .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+        .field-wrap { position: relative; }
+        .field-wrap label {
+            position: absolute; left: 1.1rem; top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.82rem; color: var(--text-muted); opacity: 0.6;
+            pointer-events: none;
+            transition: top 0.25s, font-size 0.25s, color 0.25s, opacity 0.25s;
+        }
+        .field-wrap.textarea-wrap label { top: 1.1rem; transform: none; }
+        .field-wrap input:focus ~ label,
+        .field-wrap input:not(:placeholder-shown) ~ label,
+        .field-wrap textarea:focus ~ label,
+        .field-wrap textarea:not(:placeholder-shown) ~ label {
+            top: -0.55rem; font-size: 0.64rem;
+            color: var(--accent); opacity: 1;
+            background: var(--bg-secondary); padding: 0 4px;
+        }
+        .contact-form input, .contact-form textarea {
+            width: 100%; background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 6px; padding: 0.85rem 1.1rem;
+            color: var(--text); font-family: 'Inter', sans-serif;
+            font-size: 0.85rem; outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .contact-form input::placeholder, .contact-form textarea::placeholder {
+            color: transparent;
+        }
+        .contact-form input:focus, .contact-form textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(121,129,245,0.12);
+        }
+        body.light .contact-form input:focus,
+        body.light .contact-form textarea:focus {
+            box-shadow: 0 0 0 3px rgba(0,0,139,0.1);
+        }
+        .contact-form textarea { height: 130px; resize: none; }
+        .contact-form button {
+            align-self: flex-start; cursor: pointer;
+        }
+        .contact-form button.success { background: #16a34a !important; pointer-events: none; }
+
+        /* ═══════════════════════════════════════════
+           FOOTER
+        ═══════════════════════════════════════════ */
+        footer {
+            padding: 2.5rem 4rem; background: var(--footer-bg);
+            display: flex; justify-content: space-between;
+            align-items: center; flex-wrap: wrap; gap: 1.5rem;
+            border-top: 1px solid var(--footer-border);
+        }
+        .footer-brand {
+            font-family: 'ICA Rubrik Black', serif;
+            font-size: 1.6rem; color: var(--text); letter-spacing: 2px;
+        }
+        .footer-brand span { color: var(--accent); }
+        footer p {
+            font-size: 0.72rem; color: var(--text-muted); opacity: 0.5;
+            margin-top: 0.3rem;
+        }
+        .footer-nav { display: flex; flex-wrap: wrap; gap: 0.5rem 1.8rem; }
+        .footer-nav a {
+            color: var(--text-muted); font-size: 0.75rem;
+            position: relative; padding-bottom: 2px;
+            transition: color 0.3s;
+        }
+        .footer-nav a::after {
+            content: ''; position: absolute; bottom: 0; left: 0;
+            width: 0; height: 1px; background: var(--accent);
+            transition: width 0.3s;
+        }
+        .footer-nav a:hover { color: var(--accent); }
+        .footer-nav a:hover::after { width: 100%; }
+
+        /* ═══════════════════════════════════════════
+           FLOATING THEME BUTTON
+        ═══════════════════════════════════════════ */
+        .floating-theme-btn {
+            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+            display: flex; align-items: center; gap: 8px;
+            background: var(--surface); color: var(--text);
+            border: 1.5px solid var(--card-border);
+            padding: 9px 16px 9px 12px;
+            border-radius: 50px; cursor: pointer;
+            font-family: 'Inter', sans-serif; font-size: 0.75rem;
+            letter-spacing: 1px; text-transform: uppercase;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+            transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275),
+                        box-shadow 0.3s, background 0.35s, border-color 0.35s;
+        }
+        .floating-theme-btn:hover {
+            transform: translateY(-4px) scale(1.04);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+        }
+        body.light .floating-theme-btn {
+            background: #fff; border-color: rgba(0,0,139,0.12); color: #151b29;
+            box-shadow: 0 6px 24px rgba(0,0,139,0.1);
+        }
+
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+        ═══════════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            .hero { grid-template-columns: 1fr; padding: 6rem 3rem 4rem; }
+            .hero-visual { margin-top: 2rem; }
+            .hero-badge { left: 0; }
+        }
+        @media (max-width: 900px) {
+            body { cursor: auto; }
+            header { padding: 0.75rem 1.5rem; }
+            .main-nav { gap: 1rem; }
+            .main-nav li:nth-child(n+3) { display: none; }
+            .about, .contact-section { grid-template-columns: 1fr; padding: 5rem 2rem; gap: 3rem; }
+            .about-image::before { display: none; }
+            .stack-area { flex-direction: column; height: auto; }
+            .stack-left, .stack-right { position: relative; flex-basis: auto; }
+            .stack-left { height: auto; padding: 4rem 2rem 2rem; }
+            .stack-right { height: 500px; }
+            .portfolio, .news, .awards { padding: 5rem 2rem; }
+            .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+            .g-item { height: 180px; }
+            .g-item:nth-child(1), .g-item:nth-child(5) { grid-column: auto; }
+            footer { flex-direction: column; text-align: center; padding: 2rem; }
+            .floating-theme-btn { bottom: 14px; right: 14px; }
+            .hero-mosaic { grid-template-rows: 180px 120px; }
+        }
+        @media (max-width: 600px) {
+            .hero { padding: 5rem 1.5rem 3rem; }
+            .about { padding: 4rem 1.5rem; }
+            .portfolio, .news, .awards, .contact-section { padding: 4rem 1.5rem; }
+            .gallery-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+            .g-item { height: 200px; grid-column: auto !important; }
+            .hero-ctas { flex-direction: column; }
+            .btn, .btn-outline { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- Scroll progress bar -->
+<div id="scroll-bar"></div>
+
+<!-- ═══ HEADER ═══ -->
+<header id="site-header">
+    <!-- Logo: switches per theme -->
+    <a href="#home" class="logo-container" aria-label="Erovoutika Home">
+        <!-- Dark mode logo (default) -->
+        <img class="logo-dark"
+             src="https://erovoutika.ph/assets/images/logo/Erovoutika%20Light%20Logo.webp"
+             alt="Erovoutika Logo">
+        <!-- Light mode logo -->
+        <img class="logo-light"
+             src="https://erovoutika.ph/assets/images/logo/Erovoutika%20Dark%20Logo.webp"
+             alt="Erovoutika Logo">
+    </a>
+
+    <!-- Main nav: Home, Products, EIRA, Robolution -->
+    <ul class="main-nav" id="mainNav">
+        <li><a href="#home">Home</a></li>
+        <li><a href="https://shop.erovoutika.ph/" target="_blank">Products</a></li>
+        <li><a href="http://eira-erovoutika.vercel.app/" target="_blank">EIRA</a></li>
+        <li><a href="http://robolution.erovoutika.ph/" target="_blank">Robolution</a></li>
+    </ul>
+
+    <!-- Controls: theme toggle + hamburger dropdown -->
+    <div class="header-controls">
+        <!-- Theme toggle -->
+        <button id="themeToggleBtn" class="icon-btn" aria-label="Toggle Theme">
+            <svg id="themeIconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg id="themeIconSun" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+
+        <!-- Hamburger -->
+        <button id="navToggleBtn" class="icon-btn menu-btn" aria-label="Open Menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
+
+        <!-- Dropdown -->
+        <div id="dropdownMenu" class="dropdown-menu" role="menu">
+            <a href="#news" role="menuitem"><span class="dm-icon">📰</span> News</a>
+            <a href="#contact" role="menuitem"><span class="dm-icon">✉️</span> Contact</a>
+            <a href="#about" role="menuitem"><span class="dm-icon">👥</span> Who We Are</a>
+            <div class="dropdown-divider"></div>
+            <a href="#awards" role="menuitem"><span class="dm-icon">🏆</span> Awards</a>
+            <a href="#services" role="menuitem"><span class="dm-icon">⚙️</span> Services</a>
+            <a href="#portfolio" role="menuitem"><span class="dm-icon">🗂️</span> Portfolio</a>
+        </div>
+    </div>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="home">
+    <div class="hero-text reveal">
+        <div class="hero-eyebrow">Automation & Robotics</div>
+        <h1 class="hero-title">
+            Engineering the<br>
+            <span class="gradient-word">Future</span><br>
+            Today.
+        </h1>
+        <p class="hero-body">
+            Erovoutika is a respected and experienced Automation and Robotics Company — delivering world-class solutions to clients across industries.
+        </p>
+        <div class="hero-ctas">
+            <a href="#services" class="btn">Explore Services</a>
+            <a href="#about" class="btn-outline">Who We Are</a>
+        </div>
+    </div>
+    <div class="hero-visual reveal-right">
+        <div class="hero-mosaic">
+            <div class="mosaic-item">
+                <img src="https://erovoutika.ph/assets/images/porfolio/robotics/robotic1.webp" alt="Robotics">
+            </div>
+            <div class="mosaic-item">
+                <img src="https://erovoutika.ph/assets/images/porfolio/Trainings/training2.webp" alt="Training">
+            </div>
+            <div class="mosaic-item">
+                <img src="https://erovoutika.ph/assets/images/hero_carousel/romania.webp" alt="International">
+            </div>
+        </div>
+        <div class="hero-badge">
+            <div class="badge-icon">🤖</div>
+            <div>
+                <div class="hero-badge-text">Trusted Robotics Partner</div>
+                <div class="hero-badge-sub">Philippines & Beyond</div>
+            </div>
+        </div>
+    </div>
+    <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- ═══ ABOUT ═══ -->
+<section class="about" id="about">
+    <div class="about-text">
+        <span class="section-tag reveal">Who We Are</span>
+        <h2 class="reveal delay-1">Respected.<br>Experienced.<br>Innovative.</h2>
+        <p class="reveal delay-2">Erovoutika is a respected and experienced Automation and Robotics Company. Our highly professional team, with in-depth knowledge of each jurisdiction, has successfully delivered customer needs across industries.</p>
+        <p class="reveal delay-3">Our aim is to assist our clients in getting their needs and requirements in the easiest and fastest possible time — in the most professional manner, at the most reasonable cost.</p>
+        <a href="#services" class="btn reveal delay-4">Our Services</a>
+    </div>
+    <div class="about-image reveal-right" id="aboutImg">
+        <!--
+            The <img> src below is just an initial placeholder. On page load,
+            erovoutika-cms.js reads sections/about.imageUrl from Firestore and
+            swaps this src for whatever was last uploaded in the admin panel's
+            About Me → Featured Image upload. If the admin publishes again
+            while this page is open in the same browser, the BroadcastChannel
+            listener in the CMS script re-hydrates this image instantly.
+        -->
+        <img src="https://erovoutika.ph/assets/images/porfolio/Trainings/training3.webp"
+             alt="Erovoutika Team"
+             data-cms-target="about-image"
+             referrerpolicy="no-referrer">
+    </div>
+</section>
+
+<!-- ═══ SERVICES — STACKED CARDS ═══ -->
+<div class="stack-area" id="services">
+    <div class="stack-left">
+        <span class="section-tag">What We Do</span>
+        <div class="stack-title">Our<br>Services</div>
+        <div class="stack-sub">
+            Erovoutika is a respected and experienced Automation and Robotics Company. Our highly professional team has been successfully delivering customer needs across industries.
+        </div>
+        <br>
+        <a href="#contact" class="btn" style="margin-top:1rem;">Get In Touch</a>
+    </div>
+    <div class="stack-right" id="stackRight">
+        <div class="scard">
+            <div class="scard-icon">🎓</div>
+            <div>
+                <div class="scard-sub">01 — Certifications</div>
+                <div class="scard-title">Training &<br>Certifications</div>
+            </div>
+            <div class="scard-body">Specialized certification for training, learning and development professionals seeking ways to increase business performance through innovative and collaborative training methods.</div>
+        </div>
+        <div class="scard">
+            <div class="scard-icon">⚙️</div>
+            <div>
+                <div class="scard-sub">02 — Automation</div>
+                <div class="scard-title">Automation<br>Solutions</div>
+            </div>
+            <div class="scard-body">PLC drivers and industrial communications software products for industrial and process automation — purpose-built for modern manufacturing environments.</div>
+        </div>
+        <div class="scard">
+            <div class="scard-icon">🤖</div>
+            <div>
+                <div class="scard-sub">03 — Engineering</div>
+                <div class="scard-title">Robotics</div>
+            </div>
+            <div class="scard-body">Intersection of science, engineering and technology — producing machines that replicate or substitute for human actions across industries.</div>
+        </div>
+        <div class="scard">
+            <div class="scard-icon">🔬</div>
+            <div>
+                <div class="scard-sub">04 — Innovation</div>
+                <div class="scard-title">Research &<br>Development</div>
+            </div>
+            <div class="scard-body">Activities that companies undertake to innovate and introduce new products and services — often the first stage in the development process.</div>
+        </div>
+        <div class="scard">
+            <div class="scard-icon">🛡️</div>
+            <div>
+                <div class="scard-sub">05 — Security</div>
+                <div class="scard-title">Cybersecurity</div>
+            </div>
+            <div class="scard-body">Application of technologies, processes, and controls to protect systems, networks, programs, devices, and data from cyberattacks.</div>
+        </div>
+        <div class="scard">
+            <div class="scard-icon">🔗</div>
+            <div>
+                <div class="scard-sub">06 — Decentralized</div>
+                <div class="scard-title">Blockchain</div>
+            </div>
+            <div class="scard-body">Maintaining a secure and decentralized record of transactions — best known for their crucial role in cryptocurrency systems such as Bitcoin.</div>
+        </div>
+    </div>
+    <!-- Card Slider alternate mode — hidden by default; the CMS shows this and
+         hides #stackRight when sections/services.displayMode === 'slider'. -->
+    <div class="scard-slider" id="cardSlider" style="display:none;"></div>
+</div>
+
+<!-- ═══ PORTFOLIO ═══ -->
+<section class="portfolio" id="portfolio">
+    <div class="section-header">
+        <span class="section-tag reveal">Our Work</span>
+        <h2 class="reveal delay-1">Portfolio</h2>
+    </div>
+    <div class="gallery-grid">
+        <div class="g-item reveal"><img src="https://erovoutika.ph/assets/images/porfolio/Tempo/auto-2.webp" alt="Automation"></div>
+        <div class="g-item reveal delay-1"><img src="https://erovoutika.ph/assets/images/porfolio/robotics/robotic2.webp" alt="Robotics"></div>
+        <div class="g-item reveal delay-2"><img src="https://erovoutika.ph/assets/images/porfolio/Trainings/training1.webp" alt="Training"></div>
+        <div class="g-item reveal delay-3"><img src="https://erovoutika.ph/assets/images/porfolio/robotics/robotic4.webp" alt="Robotics 4"></div>
+        <div class="g-item reveal delay-4"><img src="https://erovoutika.ph/assets/images/porfolio/Tempo/auto-5.webp" alt="Automation 5"></div>
+    </div>
+</section>
+
+<!-- ═══ AWARDS ═══ -->
+<section class="awards" id="awards">
+    <div class="section-header" style="text-align:center;">
+        <span class="section-tag reveal">Recognition</span>
+        <h2 class="section-heading reveal delay-1">Awards & Accreditations</h2>
+    </div>
+    <div class="awards-grid">
+        <div class="award-item reveal">
+            <div class="award-img-wrap">
+                <img src="https://erovoutika.ph/assets/images/awards/award1.webp" alt="PESMS">
+            </div>
+            <p>PESMS Best Choice Awardee 2020–2021</p>
+        </div>
+        <div class="award-item reveal delay-1">
+            <div class="award-img-wrap">
+                <img src="https://erovoutika.ph/assets/images/awards/award2.webp" alt="CompTIA">
+            </div>
+            <p>CompTIA Authorized Partner</p>
+        </div>
+        <div class="award-item reveal delay-2">
+            <div class="award-img-wrap">
+                <img src="https://erovoutika.ph/assets/images/awards/award3.webp" alt="Q Asia">
+            </div>
+            <p>Q Asia Quality Excellence Awardee 2020–2021</p>
+        </div>
+        <div class="award-item reveal delay-3">
+            <div class="award-img-wrap">
+                <img src="https://erovoutika.ph/assets/images/awards/award4.webp" alt="CPD">
+            </div>
+            <p>CPD Provider Accreditation ECE-2022-014</p>
+        </div>
+        <div class="award-item reveal delay-4">
+            <div class="award-img-wrap">
+                <img src="https://erovoutika.ph/assets/images/awards/award5.webp" alt="PSMA">
+            </div>
+            <p>Philippine Social Media Awards Star Brand 2020</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ PARTNERS MARQUEE ═══ -->
+<section class="partners">
+    <p class="partners-label reveal">Industry &amp; Academe Partners</p>
+    <div class="marquee-wrap">
+        <div class="marquee-track">
+            <img src="https://erovoutika.ph/assets/images/clients/client-1.webp" alt="Partner 1">
+            <img src="https://erovoutika.ph/assets/images/clients/client-2.webp" alt="Partner 2">
+            <img src="https://erovoutika.ph/assets/images/clients/client-3.webp" alt="Partner 3">
+            <img src="https://erovoutika.ph/assets/images/clients/client-4.webp" alt="Partner 4">
+            <img src="https://erovoutika.ph/assets/images/clients/client-5.webp" alt="Partner 5">
+            <img src="https://erovoutika.ph/assets/images/clients/client-6.webp" alt="Partner 6">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo1.webp" alt="Univ 1">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo2.webp" alt="Univ 2">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo3.webp" alt="Univ 3">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo4.webp" alt="Univ 4">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo5.webp" alt="Univ 5">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo6.webp" alt="Univ 6">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo7.webp" alt="Univ 7">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo8.webp" alt="Univ 8">
+            <!-- Duplicate for seamless loop -->
+            <img src="https://erovoutika.ph/assets/images/clients/client-1.webp" alt="Partner 1">
+            <img src="https://erovoutika.ph/assets/images/clients/client-2.webp" alt="Partner 2">
+            <img src="https://erovoutika.ph/assets/images/clients/client-3.webp" alt="Partner 3">
+            <img src="https://erovoutika.ph/assets/images/clients/client-4.webp" alt="Partner 4">
+            <img src="https://erovoutika.ph/assets/images/clients/client-5.webp" alt="Partner 5">
+            <img src="https://erovoutika.ph/assets/images/clients/client-6.webp" alt="Partner 6">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo1.webp" alt="Univ 1">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo2.webp" alt="Univ 2">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo3.webp" alt="Univ 3">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo4.webp" alt="Univ 4">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo5.webp" alt="Univ 5">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo6.webp" alt="Univ 6">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo7.webp" alt="Univ 7">
+            <img src="https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo8.webp" alt="Univ 8">
+        </div>
+    </div>
+</section>
+
+<!-- ═══ NEWS ═══ -->
+<section class="news" id="news">
+    <div class="section-header">
+        <span class="section-tag reveal">Latest</span>
+        <h2 class="reveal delay-1">News & Updates</h2>
+    </div>
+    <div class="news-grid">
+        <div class="news-card reveal">
+            <div class="news-card-img">
+                <img src="https://erovoutika.ph/assets/images/hero_carousel/romania.webp" alt="Romania">
+            </div>
+            <div class="news-body">
+                <p class="news-date">April 20–22, 2023</p>
+                <h3>Team Philippines Goes to Romania for International Robotics Championship</h3>
+                <a href="https://erovoutika.ph/readmore.php" target="_blank" class="read-more-link">
+                    Read More
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+            </div>
+        </div>
+        <div class="news-card reveal delay-1">
+            <div class="news-card-img">
+                <img src="https://erovoutika.ph/assets/images/hero_carousel/congrats.webp" alt="Interns">
+            </div>
+            <div class="news-body">
+                <p class="news-date">May 06, 2023</p>
+                <h3>Congratulations to Our Former Engineering Interns — 89 Passers!</h3>
+                <a href="https://www.facebook.com/erovoutika" target="_blank" class="read-more-link">
+                    Read More
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+            </div>
+        </div>
+        <div class="news-card reveal delay-2">
+            <div class="news-card-img">
+                <img src="https://erovoutika.ph/assets/images/porfolio/robotics/robotic6.webp" alt="Robolution">
+            </div>
+            <div class="news-body">
+                <p class="news-date">Coming Soon</p>
+                <h3>ROBOLUTION 2023 — 2nd Edition. Watch This Space.</h3>
+                <a href="https://www.facebook.com/erovoutika" target="_blank" class="read-more-link">
+                    Read More
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ CONTACT ═══ -->
+<section class="contact-section" id="contact">
+    <div class="contact-info">
+        <span class="section-tag reveal">Get In Touch</span>
+        <h2 class="reveal delay-1">Got A Problem?<br>Let's Talk.</h2>
+        <div class="contact-detail reveal delay-2">
+            <div>
+                <strong>Address</strong>
+                <p>Unit 703, PARC HOUSE II, Epifanio de los Santos Ave,<br>Makati, 1212 Metro Manila, Philippines</p>
+            </div>
+            <div>
+                <strong>Email</strong>
+                <p>erovoutika@gmail.com</p>
+            </div>
+            <div>
+                <strong>Phone</strong>
+                <p>074 423 1557</p>
+            </div>
+        </div>
+    </div>
+    <div class="contact-form reveal-right">
+        <div class="field-wrap">
+            <input type="text" id="f-name" placeholder=" ">
+            <label for="f-name">Your Name</label>
+        </div>
+        <div class="field-wrap">
+            <input type="email" id="f-email" placeholder=" ">
+            <label for="f-email">Your Email</label>
+        </div>
+        <div class="field-wrap">
+            <input type="text" id="f-subject" placeholder=" ">
+            <label for="f-subject">Subject</label>
+        </div>
+        <div class="field-wrap textarea-wrap">
+            <textarea id="f-message" placeholder=" "></textarea>
+            <label for="f-message">Your Message</label>
+        </div>
+        <button type="button" id="sendBtn" class="btn">Send Message</button>
+    </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+    <div>
+        <div class="footer-brand">ERO<span>.</span>VOUTIKA</div>
+        <p>© 2025 Erovoutika. All rights reserved.</p>
+    </div>
+    <nav class="footer-nav" aria-label="Footer navigation">
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#awards">Awards</a>
+        <a href="#news">News</a>
+        <a href="#contact">Contact</a>
+        <a href="https://shop.erovoutika.ph/" target="_blank">Shop</a>
+        <a href="http://eira-erovoutika.vercel.app/" target="_blank">EIRA</a>
+        <a href="http://robolution.erovoutika.ph/" target="_blank">Robolution</a>
+    </nav>
+</footer>
+
+<!-- Floating theme toggle -->
+<button id="floating-theme-toggle" class="floating-theme-btn" aria-label="Toggle theme">
+    <span id="ftIcon">🌙</span>
+    <span id="ftLabel">Light Mode</span>
+</button>
+
+<script>
+/* ═══════════════════════════════════════════
+   1. THEME TOGGLE
+═══════════════════════════════════════════ */
+const body        = document.body;
+const themeBtn    = document.getElementById('themeToggleBtn');
+const floatBtn    = document.getElementById('floating-theme-toggle');
+const ftIcon      = document.getElementById('ftIcon');
+const ftLabel     = document.getElementById('ftLabel');
+const iconMoon    = document.getElementById('themeIconMoon');
+const iconSun     = document.getElementById('themeIconSun');
+
+function applyTheme(isLight) {
+    if (isLight) {
+        body.classList.add('light');
+        ftIcon.textContent  = '☀️';
+        ftLabel.textContent = 'Dark Mode';
+        iconMoon.style.display = 'none';
+        iconSun.style.display  = 'block';
+    } else {
+        body.classList.remove('light');
+        ftIcon.textContent  = '🌙';
+        ftLabel.textContent = 'Light Mode';
+        iconMoon.style.display = 'block';
+        iconSun.style.display  = 'none';
+    }
+    localStorage.setItem('ero-theme', isLight ? 'light' : 'dark');
+}
+
+applyTheme(localStorage.getItem('ero-theme') === 'light');
+themeBtn.addEventListener('click', () => applyTheme(!body.classList.contains('light')));
+floatBtn.addEventListener('click', () => applyTheme(!body.classList.contains('light')));
+
+/* ═══════════════════════════════════════════
+   2. DROPDOWN NAVIGATION
+═══════════════════════════════════════════ */
+const navToggleBtn = document.getElementById('navToggleBtn');
+const dropdownMenu = document.getElementById('dropdownMenu');
+
+navToggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = dropdownMenu.classList.toggle('open');
+    navToggleBtn.setAttribute('aria-expanded', isOpen.toString());
+});
+
+document.addEventListener('click', (e) => {
+    if (!navToggleBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.remove('open');
+        navToggleBtn.setAttribute('aria-expanded', 'false');
+    }
+});
+
+dropdownMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+        dropdownMenu.classList.remove('open');
+        navToggleBtn.setAttribute('aria-expanded', 'false');
+    });
+});
+
+// Close on Escape
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        dropdownMenu.classList.remove('open');
+        navToggleBtn.setAttribute('aria-expanded', 'false');
+    }
+});
+
+/* ═══════════════════════════════════════════
+   3. CUSTOM CURSOR
+═══════════════════════════════════════════ */
+const dot  = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+function animCursor() {
+    dot.style.left = mx + 'px';
+    dot.style.top  = my + 'px';
+    rx += (mx - rx) * 0.15;
+    ry += (my - ry) * 0.15;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(animCursor);
+}
+animCursor();
+
+document.querySelectorAll('a, button, .scard, .award-item, .news-card, .g-item')
+    .forEach(el => {
+        el.addEventListener('mouseenter', () => body.classList.add('cursor-hover'));
+        el.addEventListener('mouseleave', () => body.classList.remove('cursor-hover'));
+    });
+
+/* ═══════════════════════════════════════════
+   4. SCROLL PROGRESS BAR
+═══════════════════════════════════════════ */
+const scrollBar = document.getElementById('scroll-bar');
+window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    scrollBar.style.width = pct + '%';
+}, { passive: true });
+
+/* ═══════════════════════════════════════════
+   5. SCROLL REVEAL
+═══════════════════════════════════════════ */
+const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+        if (e.isIntersecting) {
+            e.target.classList.add('visible');
+        }
+    });
+}, { threshold: 0.13 });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .section-tag')
+    .forEach(el => revealObs.observe(el));
+
+/* ═══════════════════════════════════════════
+   6. STACKED CARDS
+═══════════════════════════════════════════ */
+let cards = document.querySelectorAll('.scard');
+const stackArea = document.querySelector('.stack-area');
+
+function rotateCards() {
+    let angle = 0;
+    cards.forEach(card => {
+        if (card.classList.contains('away')) {
+            card.style.transform = 'translateY(-120vh) rotate(-48deg)';
+        } else {
+            card.style.transform = `rotate(${angle}deg)`;
+            angle -= 10;
+        }
+    });
+    cards.forEach((card, i) => {
+        if (!card.classList.contains('away')) card.style.zIndex = cards.length - i;
+    });
+}
+rotateCards();
+
+/* ── Scroll-driven card dismissal ──────────────────────────────────────────
+   The .stack-area is 400 vh tall with sticky columns so there is 300 vh of
+   "scroll budget" available while the section is pinned.  We divide that
+   budget evenly among the cards so each one flies away in turn.
+─────────────────────────────────────────────────────────────────────────── */
+function handleStackScroll() {
+    if (!stackArea) return;
+    const rect      = stackArea.getBoundingClientRect();
+    const scrolled  = -rect.top;                        // px scrolled past top
+    const budget    = rect.height - window.innerHeight; // total scroll budget
+    if (scrolled < 0 || scrolled > budget + window.innerHeight) return;
+
+    const numCards  = cards.length;
+    const step      = budget / numCards;                // px per card
+
+    cards.forEach((card, i) => {
+        card.classList.toggle('away', scrolled >= step * (i + 1));
+    });
+    rotateCards();
+}
+
+// Register the scroll listener once; store a reference so we can remove it
+// when __reinitCards replaces the cards NodeList.
+let _stackScrollListener = handleStackScroll;
+window.addEventListener('scroll', _stackScrollListener, { passive: true });
+handleStackScroll(); // run once on page load in case already scrolled
+
+window.__reinitCards = function () {
+    cards = document.querySelectorAll('.scard');
+    // Remove old listener, re-register so the new cards NodeList is captured
+    window.removeEventListener('scroll', _stackScrollListener);
+    _stackScrollListener = handleStackScroll;
+    window.addEventListener('scroll', _stackScrollListener, { passive: true });
+    handleStackScroll();
+    rotateCards();
+    cards.forEach(card => {
+        card.addEventListener('mousemove', e => {
+            if (card.classList.contains('away')) return;
+            const r = card.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width  - 0.5;
+            const y = (e.clientY - r.top)  / r.height - 0.5;
+            const base = parseFloat(card.style.transform.match(/rotate\(([^)]+)deg\)/)?.[1] || 0);
+            card.style.transform = `rotate(${base}deg) perspective(600px) rotateY(${x*10}deg) rotateX(${-y*10}deg)`;
+        });
+        card.addEventListener('mouseleave', () => rotateCards());
+        card.addEventListener('mouseenter', () => body.classList.add('cursor-hover'));
+        card.addEventListener('mouseleave', () => body.classList.remove('cursor-hover'));
+    });
+};
+
+/* ═══════════════════════════════════════════
+   6b. SERVICES — CARD SLIDER (alternate mode)
+   The CMS rebuilds #cardSlider's children, then calls this to lay them out.
+═══════════════════════════════════════════ */
+window.__reinitSlider = function () {
+    const slider = document.getElementById('cardSlider');
+    if (!slider) return;
+    const items = slider.querySelectorAll('.sl-item');
+    if (!items.length) return;
+
+    // Start with the middle card focused
+    let active = Math.min(2, Math.floor((items.length - 1) / 2));
+
+    function loadShow() {
+        items[active].style.transform = 'none';
+        items[active].style.zIndex = String(items.length);
+        items[active].style.filter = 'none';
+        items[active].style.opacity = '1';
+
+        // Cards to the right of the active one
+        let stt = 0;
+        for (let i = active + 1; i < items.length; i++) {
+            stt++;
+            items[i].style.transform = `translateX(${120 * stt}px) scale(${1 - 0.2 * stt}) perspective(16px) rotateY(-1deg)`;
+            items[i].style.zIndex = String(items.length - stt);
+            items[i].style.filter = 'blur(5px)';
+            items[i].style.opacity = stt > 2 ? '0' : '0.6';
+        }
+        // Cards to the left of the active one
+        stt = 0;
+        for (let i = active - 1; i >= 0; i--) {
+            stt++;
+            items[i].style.transform = `translateX(${-120 * stt}px) scale(${1 - 0.2 * stt}) perspective(16px) rotateY(1deg)`;
+            items[i].style.zIndex = String(items.length - stt);
+            items[i].style.filter = 'blur(5px)';
+            items[i].style.opacity = stt > 2 ? '0' : '0.6';
+        }
+    }
+
+    loadShow();
+
+    const next = slider.querySelector('.sl-next');
+    const prev = slider.querySelector('.sl-prev');
+    if (next) next.onclick = () => {
+        if (active + 1 < items.length) { active++; loadShow(); }
+    };
+    if (prev) prev.onclick = () => {
+        if (active - 1 >= 0) { active--; loadShow(); }
+    };
+
+    // Cursor-hover enlargement for slider items (matches the stack-cards effect)
+    items.forEach(item => {
+        item.addEventListener('mouseenter', () => body.classList.add('cursor-hover'));
+        item.addEventListener('mouseleave', () => body.classList.remove('cursor-hover'));
+    });
+};
+
+cards.forEach(card => {
+    card.addEventListener('mousemove', e => {
+        if (card.classList.contains('away')) return;
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width  - 0.5;
+        const y = (e.clientY - r.top)  / r.height - 0.5;
+        const base = parseFloat(card.style.transform.match(/rotate\(([^)]+)deg\)/)?.[1] || 0);
+        card.style.transform = `rotate(${base}deg) perspective(600px) rotateY(${x * 10}deg) rotateX(${-y * 10}deg)`;
+    });
+    card.addEventListener('mouseleave', () => rotateCards());
+});
+
+/* ═══════════════════════════════════════════
+   7. ABOUT IMAGE TILT
+═══════════════════════════════════════════ */
+const aboutImg = document.getElementById('aboutImg');
+if (aboutImg) {
+    aboutImg.addEventListener('mousemove', e => {
+        const r = aboutImg.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width  - 0.5;
+        const y = (e.clientY - r.top)  / r.height - 0.5;
+        aboutImg.querySelector('img').style.transform =
+            `perspective(800px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg) scale(1.02)`;
+    });
+    aboutImg.addEventListener('mouseleave', () => {
+        aboutImg.querySelector('img').style.transform = '';
+    });
+}
+
+/* ═══════════════════════════════════════════
+   8. RIPPLE EFFECT
+═══════════════════════════════════════════ */
+function addRipple(el) {
+    el.addEventListener('click', function(e) {
+        const r   = this.getBoundingClientRect();
+        const rpl = document.createElement('span');
+        const size = Math.max(r.width, r.height);
+        rpl.className = 'ripple';
+        rpl.style.cssText = `width:${size}px;height:${size}px;position:absolute;border-radius:50%;background:rgba(255,255,255,0.28);transform:scale(0);animation:ripple-anim 0.55s linear;pointer-events:none;left:${e.clientX-r.left-size/2}px;top:${e.clientY-r.top-size/2}px`;
+        this.appendChild(rpl);
+        setTimeout(() => rpl.remove(), 600);
+    });
+}
+document.querySelectorAll('.btn, .btn-outline').forEach(addRipple);
+
+/* ═══════════════════════════════════════════
+   9. CONTACT FORM SUBMIT
+═══════════════════════════════════════════ */
+document.getElementById('sendBtn').addEventListener('click', function() {
+    const name    = document.getElementById('f-name').value.trim();
+    const email   = document.getElementById('f-email').value.trim();
+    const message = document.getElementById('f-message').value.trim();
+    if (!name || !email || !message) return;
+    this.textContent = 'Sending…';
+    setTimeout(() => {
+        this.textContent = 'Sent! ✓';
+        this.classList.add('success');
+        setTimeout(() => {
+            this.textContent = 'Send Message';
+            this.classList.remove('success');
+            document.getElementById('f-name').value    = '';
+            document.getElementById('f-email').value   = '';
+            document.getElementById('f-subject').value = '';
+            document.getElementById('f-message').value = '';
+        }, 3000);
+    }, 900);
+});
+
+/* ═══════════════════════════════════════════
+   10. NAV ACTIVE SECTION HIGHLIGHT
+═══════════════════════════════════════════ */
+const sections = document.querySelectorAll('section[id], div[id="services"]');
+const mainNavLinks = document.querySelectorAll('.main-nav a[href^="#"], .dropdown-menu a[href^="#"]');
+
+const navObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if (e.isIntersecting) {
+            mainNavLinks.forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href') === '#' + e.target.id) a.classList.add('active');
+            });
+        }
+    });
+}, { threshold: 0.35 });
+sections.forEach(s => navObs.observe(s));
+
+/* ═══════════════════════════════════════════
+   11. HEADER SCROLL SHADOW
+═══════════════════════════════════════════ */
+const siteHeader = document.getElementById('site-header');
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 40) {
+        siteHeader.style.boxShadow = '0 4px 24px rgba(0,0,0,0.2)';
+    } else {
+        siteHeader.style.boxShadow = 'none';
+    }
+}, { passive: true });
+</script>
+
+<script type="module" src="erovoutika-cms.js"></script>
+</body>
+</html>

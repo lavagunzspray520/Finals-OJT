@@ -1,0 +1,2496 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erovoutika — Admin Console</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════
+           DESIGN TOKENS — LIGHT & DARK
+        ═══════════════════════════════════════ */
+        :root {
+            --primary: #00008b; 
+            --primary-light: #1a1aad;
+            --primary-ghost: rgba(0,0,139,0.08);
+            --accent: #4f46e5;
+            --accent-soft: rgba(79,70,229,0.12);
+
+            --bg: #faf8ff;
+            --bg2: #f0eeff;
+            --surface: #ffffff;
+            --surface2: #f5f3ff;
+            --border: #e2deff;
+            --border-soft: #ede9ff;
+
+            --text: #0d0d1a;
+            --text-sub: #4a4a6a;
+            --text-muted: #8484a4;
+
+            --danger: #c0152a;
+            --danger-soft: rgba(192,21,42,0.1);
+            --success: #0f7a4b;
+            --success-soft: rgba(15,122,75,0.1);
+            --warning: #b45309;
+            --warning-soft: rgba(180,83,9,0.1);
+
+            --radius-sm: 6px;
+            --radius: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+
+            --shadow: 0 2px 8px rgba(0,0,100,0.06), 0 1px 2px rgba(0,0,100,0.04);
+            --shadow-md: 0 8px 24px rgba(0,0,100,0.08), 0 2px 6px rgba(0,0,100,0.05);
+            --shadow-lg: 0 20px 50px rgba(0,0,100,0.10);
+
+            --sidebar-w: 260px;
+            --navbar-h: 60px;
+            --transition: 0.2s ease;
+        }
+
+        [data-theme="dark"] {
+            --primary: #818cf8;
+            --primary-light: #a5b4fc;
+            --primary-ghost: rgba(129,140,248,0.1);
+            --accent: #7c3aed;
+            --accent-soft: rgba(124,58,237,0.15);
+
+            --bg: #0f172a;
+            --bg2: #1e1b4b;
+            --surface: #1a1f3a;
+            --surface2: #242847;
+            --border: #2d3268;
+            --border-soft: #252855;
+
+            --text: #e2e8f0;
+            --text-sub: #94a3b8;
+            --text-muted: #64748b;
+
+            --danger: #f87171;
+            --danger-soft: rgba(248,113,113,0.12);
+            --success: #34d399;
+            --success-soft: rgba(52,211,153,0.12);
+            --warning: #fbbf24;
+            --warning-soft: rgba(251,191,36,0.12);
+
+            --shadow: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.35);
+            --shadow-lg: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        /* ═══════════════════════════════════════
+           RESET & BASE
+        ═══════════════════════════════════════ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            transition: background var(--transition), color var(--transition);
+        }
+
+        h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', sans-serif; }
+
+        /* ═══════════════════════════════════════
+           AUTH SCREEN
+        ═══════════════════════════════════════ */
+        #auth-screen {
+            display: flex;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #auth-screen::before {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(79,70,229,0.12) 0%, transparent 70%);
+            top: -200px; right: -200px;
+        }
+        #auth-screen::after {
+            content: '';
+            position: absolute;
+            width: 400px; height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,0,139,0.08) 0%, transparent 70%);
+            bottom: -100px; left: -100px;
+        }
+
+        .auth-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 3rem 2.5rem;
+            width: 420px;
+            max-width: 95vw;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-logo {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: var(--radius-lg);
+            margin: 0 auto 1.5rem;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: white;
+            letter-spacing: -1px;
+        }
+
+        .auth-card h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.35rem;
+            letter-spacing: -0.5px;
+        }
+
+        .auth-card .subtitle {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 2rem;
+        }
+
+        .login-error {
+            background: var(--danger-soft);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            display: none;
+            text-align: left;
+        }
+
+        /* ═══════════════════════════════════════
+           BUTTON SYSTEM
+        ═══════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all var(--transition);
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,139,0.2);
+        }
+        [data-theme="dark"] .btn-primary {
+            box-shadow: 0 2px 8px rgba(129,140,248,0.25);
+        }
+        .btn-primary:hover { background: var(--primary-light); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,139,0.25); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-sub);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-ghost); }
+
+        .btn-danger {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border: 1px solid transparent;
+        }
+        .btn-danger:hover { background: var(--danger); color: white; }
+
+        .btn-success {
+            background: var(--success-soft);
+            color: var(--success);
+            border: 1px solid transparent;
+        }
+        .btn-success:hover { background: var(--success); color: white; }
+
+        .btn-full { width: 100%; }
+
+        .btn-sm { padding: 7px 14px; font-size: 0.8rem; }
+        .btn-icon { padding: 8px; border-radius: var(--radius-sm); aspect-ratio: 1; }
+
+        /* ═══════════════════════════════════════
+           APP SHELL
+        ═══════════════════════════════════════ */
+        #admin-screen { display: none; min-height: 100vh; }
+
+        /* NAVBAR */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--navbar-h);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem 0 0;
+            z-index: 100;
+            transition: background var(--transition);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 1.5rem;
+            height: 100%;
+            border-right: 1px solid var(--border);
+            width: var(--sidebar-w);
+        }
+
+        .brand-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        .brand-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+        .brand-name span { color: var(--primary); }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 4px 14px 4px 6px;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+        }
+
+        .user-avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            display: flex; align-items: center; justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        /* THEME TOGGLE */
+        .theme-toggle {
+            width: 36px; height: 20px;
+            background: var(--border);
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: background var(--transition);
+            flex-shrink: 0;
+        }
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px; left: 2px;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: var(--surface);
+            transition: transform 0.3s ease;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+        [data-theme="dark"] .theme-toggle { background: var(--primary); }
+        [data-theme="dark"] .theme-toggle::after { transform: translateX(16px); }
+
+        /* SIDEBAR */
+        .layout { display: flex; min-height: 100vh; padding-top: var(--navbar-h); }
+
+        .sidebar {
+            width: var(--sidebar-w);
+            position: fixed;
+            top: var(--navbar-h);
+            bottom: 0;
+            left: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 1.5rem 0.75rem;
+            z-index: 90;
+            transition: background var(--transition);
+        }
+
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            padding: 0 10px;
+            margin-bottom: 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            color: var(--text-sub);
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all var(--transition);
+            position: relative;
+        }
+
+        .nav-item:hover { background: var(--surface2); color: var(--text); }
+        .nav-item.active { background: var(--primary-ghost); color: var(--primary); font-weight: 600; }
+
+        .nav-icon {
+            width: 18px;
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
+        .nav-item.active .nav-icon { opacity: 1; }
+
+        .sidebar-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 1rem 10px;
+        }
+
+        /* MAIN CONTENT */
+        .main { margin-left: var(--sidebar-w); flex: 1; padding: 2.5rem; }
+
+        /* ═══════════════════════════════════════
+           PANELS / SECTIONS
+        ═══════════════════════════════════════ */
+        .panel { display: none; animation: fadeIn 0.3s ease; }
+        .panel.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .panel-header {
+            margin-bottom: 2rem;
+        }
+        .panel-header h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.5px;
+        }
+        .panel-header p {
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-size: 0.875rem;
+        }
+
+        /* CARD */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            transition: background var(--transition), border-color var(--transition);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title-icon {
+            width: 28px; height: 28px;
+            border-radius: var(--radius-sm);
+            background: var(--primary-ghost);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary);
+            font-size: 0.75rem;
+        }
+
+        /* FORM ELEMENTS */
+        .form-group { margin-bottom: 1.25rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+        label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        label .required { color: var(--danger); margin-left: 3px; }
+        label .hint { color: var(--text-muted); font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 0.75rem; margin-left: 4px; }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            transition: all var(--transition);
+            appearance: none;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--surface);
+            box-shadow: 0 0 0 3px var(--primary-ghost);
+        }
+        input::placeholder, textarea::placeholder { color: var(--text-muted); }
+        textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+
+        /* RANGE SLIDER */
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        input[type="range"] {
+            flex: 1;
+            padding: 0;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            cursor: pointer;
+            border: none;
+            box-shadow: none;
+            accent-color: var(--primary);
+        }
+        .slider-value {
+            min-width: 52px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: var(--primary-ghost);
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+        }
+
+        /* IMAGE UPLOADER */
+        .image-upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+            background: var(--bg);
+        }
+        .image-upload-zone:hover, .image-upload-zone.drag-over {
+            border-color: var(--primary);
+            background: var(--primary-ghost);
+        }
+        .image-upload-zone input[type="file"] {
+            position: absolute; inset: 0;
+            opacity: 0; cursor: pointer;
+            width: 100%; height: 100%;
+            border: none; background: transparent; padding: 0; border-radius: 0;
+        }
+        .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .upload-text { color: var(--text-muted); font-size: 0.85rem; }
+        .upload-text strong { color: var(--primary); }
+
+        .image-preview-box {
+            margin-top: 1rem;
+            display: none;
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .image-preview-box img {
+            width: 100%;
+            display: block;
+            max-height: 260px;
+            object-fit: cover;
+        }
+        .image-preview-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        /* STATUS BADGE */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        .badge-live { background: var(--success-soft); color: var(--success); }
+        .badge-draft { background: var(--warning-soft); color: var(--warning); }
+        .badge-locked { background: var(--border); color: var(--text-muted); }
+
+        /* ═══════════════════════════════════════
+           OVERVIEW / TUTORIAL
+        ═══════════════════════════════════════ */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--primary); margin: 4px 0; }
+        .stat-desc { font-size: 0.78rem; color: var(--text-muted); }
+
+        .tutorial-steps { counter-reset: step; }
+        .tutorial-step {
+            display: flex;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .tutorial-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 19px; top: 44px; bottom: -16px;
+            width: 2px;
+            background: var(--border);
+        }
+        .step-num {
+            counter-increment: step;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--primary-ghost);
+            border: 2px solid var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700; font-size: 0.9rem;
+            flex-shrink: 0; position: relative; z-index: 1;
+        }
+        .step-content h4 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+        .step-content p { font-size: 0.83rem; color: var(--text-muted); line-height: 1.6; }
+        .step-content .step-tag {
+            display: inline-block;
+            background: var(--accent-soft); color: var(--accent);
+            font-size: 0.7rem; font-weight: 600;
+            padding: 2px 8px; border-radius: 4px; margin-top: 6px;
+        }
+
+        /* QUICK LINKS */
+        .quick-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .quick-link-btn {
+            display: flex; align-items: center; gap: 12px;
+            padding: 1rem 1.25rem;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: var(--radius); cursor: pointer;
+            transition: all var(--transition);
+            text-decoration: none; color: var(--text);
+        }
+        .quick-link-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-ghost); transform: translateY(-2px); }
+        .ql-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--primary-ghost); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .ql-text strong { display: block; font-size: 0.85rem; font-weight: 600; }
+        .ql-text span { font-size: 0.75rem; color: var(--text-muted); }
+
+        /* ═══════════════════════════════════════
+           ABOUT EDITOR SPECIFICS
+        ═══════════════════════════════════════ */
+        .preview-resize-demo {
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.5rem; margin-top: 0.75rem;
+            text-align: center; min-height: 80px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .preview-resize-demo img {
+            border-radius: var(--radius-sm); display: none;
+            box-shadow: var(--shadow); object-fit: contain;
+        }
+
+        .fit-options { display: flex; gap: 8px; flex-wrap: wrap; }
+        .fit-opt {
+            padding: 6px 14px; border: 1px solid var(--border);
+            border-radius: var(--radius-sm); font-size: 0.78rem; font-weight: 600;
+            cursor: pointer; color: var(--text-sub); background: var(--surface);
+            transition: all var(--transition);
+        }
+        .fit-opt.active, .fit-opt:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-ghost); }
+
+        /* ═══════════════════════════════════════
+           ITEM LIST (Services, Portfolio, etc.)
+        ═══════════════════════════════════════ */
+        .item-list { margin-bottom: 1rem; }
+
+        .item-row {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            transition: border-color var(--transition);
+        }
+        .item-row:hover { border-color: var(--primary); }
+
+        .item-row-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        .item-row-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+        .item-row-actions { display: flex; gap: 6px; }
+
+        /* Thumbnail in item row */
+        .item-thumb {
+            width: 60px; height: 60px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            border: 1px solid var(--border);
+            display: block;
+        }
+        .item-thumb-wrap { display: flex; align-items: flex-start; gap: 1rem; }
+        .item-thumb-wrap .fields { flex: 1; }
+
+        /* Mini upload zone */
+        .mini-upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            background: var(--bg);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            transition: all var(--transition);
+        }
+        .mini-upload-zone:hover { border-color: var(--primary); color: var(--primary); }
+        .mini-upload-zone input[type="file"] {
+            position: absolute; inset: 0; opacity: 0; cursor: pointer;
+            width: 100%; height: 100%; border: none; padding: 0;
+        }
+
+        /* Partner logo grid */
+        .partner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .partner-item {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.75rem;
+            text-align: center;
+            position: relative;
+        }
+        .partner-item img {
+            width: 100%; height: 60px;
+            object-fit: contain;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .partner-item-name {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .partner-remove {
+            position: absolute;
+            top: 4px; right: 4px;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: var(--danger);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 0.7rem;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+        .partner-item:hover .partner-remove { opacity: 1; }
+
+        /* Progress bar for uploads */
+        .upload-progress {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin-top: 8px;
+            display: none;
+        }
+        .upload-progress-bar {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+            width: 0;
+            transition: width 0.2s;
+        }
+
+        /* ═══════════════════════════════════════
+           TOAST NOTIFICATION
+        ═══════════════════════════════════════ */
+        #toast-container {
+            position: fixed;
+            bottom: 24px; right: 24px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 12px 18px;
+            box-shadow: var(--shadow-md);
+            font-size: 0.85rem; font-weight: 500;
+            display: flex; align-items: center; gap: 10px;
+            min-width: 260px;
+            transform: translateX(120%); opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .toast.show { transform: translateX(0); opacity: 1; }
+        .toast-icon { font-size: 1rem; }
+        .toast.success { border-left: 3px solid var(--success); }
+        .toast.error { border-left: 3px solid var(--danger); }
+        .toast.info { border-left: 3px solid var(--primary); }
+
+        /* ═══════════════════════════════════════
+           LOADING SPINNER
+        ═══════════════════════════════════════ */
+        .spinner {
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ═══════════════════════════════════════
+           RESPONSIVE
+        ═══════════════════════════════════════ */
+        @media (max-width: 900px) {
+            :root { --sidebar-w: 220px; }
+            .overview-grid { grid-template-columns: 1fr 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .form-row-3 { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 680px) {
+            :root { --sidebar-w: 0px; }
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 1.5rem 1rem; }
+            .navbar-brand { width: auto; border-right: none; }
+            .overview-grid { grid-template-columns: 1fr; }
+            .quick-links { grid-template-columns: 1fr; }
+            .user-badge .user-email { display: none; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+    <div class="auth-card">
+        <div class="auth-logo">ER</div>
+        <h2>Erovoutika Console</h2>
+        <p class="subtitle">Secure Admin Portal — Authorized Personnel Only</p>
+        <button id="login-btn" class="btn btn-primary btn-full">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Sign in with Google
+        </button>
+        <div id="login-error" class="login-error"></div>
+    </div>
+</div>
+
+<!-- ADMIN DASHBOARD -->
+<div id="admin-screen">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="brand-icon">ER</div>
+            <div class="brand-name">ERO<span>VOUTIKA</span></div>
+        </div>
+        <div class="navbar-right">
+            <a href="#" id="view-live-btn" target="_blank" class="btn btn-ghost btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                View Live Site
+            </a>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"></button>
+            <div class="user-badge">
+                <div class="user-avatar" id="user-avatar">?</div>
+                <span class="user-email" id="user-email">Loading...</span>
+            </div>
+            <button id="logout-btn" class="btn btn-ghost btn-sm">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Layout -->
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-label">Navigation</div>
+                <div class="nav-item active" data-panel="overview">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    Overview
+                </div>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">Content</div>
+                <div class="nav-item" data-panel="about">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                    About Me
+                </div>
+                <div class="nav-item" data-panel="services">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 100 18A9 9 0 0012 3z"/><path d="M12 8v4l3 3"/></svg>
+                    Services
+                </div>
+                <div class="nav-item" data-panel="portfolio">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                    Portfolio
+                </div>
+                <div class="nav-item" data-panel="awards">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+                    Awards
+                </div>
+                <div class="nav-item" data-panel="partners">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Academe Partners
+                </div>
+                <div class="nav-item" data-panel="news">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                    News & Updates
+                </div>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">Links</div>
+                <a href="#" id="live-site-link" target="_blank" class="nav-item" style="text-decoration: none;">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+                    Live Site
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+
+            <!-- ── OVERVIEW PANEL ── -->
+            <div class="panel active" id="panel-overview">
+                <div class="panel-header">
+                    <h2>Dashboard Overview</h2>
+                    <p>Welcome to the Erovoutika Admin Console. Manage your live site content from here.</p>
+                </div>
+
+                <div class="overview-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Active Sections</div>
+                        <div class="stat-value">6</div>
+                        <div class="stat-desc">All content sections editable</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Firebase Status</div>
+                        <div class="stat-value" style="font-size:1rem; padding-top:8px;"><span class="status-badge badge-draft" id="db-status">Connecting...</span></div>
+                        <div class="stat-desc">Firestore cloud database</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Locked Sections</div>
+                        <div class="stat-value">0</div>
+                        <div class="stat-desc">All sections fully unlocked</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-title-icon">⚡</div> Quick Access</div>
+                    </div>
+                    <div class="quick-links">
+                        <div class="quick-link-btn" onclick="showPanel('about')">
+                            <div class="ql-icon">👤</div>
+                            <div class="ql-text"><strong>About Me</strong><span>Headline, bio & photo</span></div>
+                        </div>
+                        <div class="quick-link-btn" onclick="showPanel('services')">
+                            <div class="ql-icon">⚙️</div>
+                            <div class="ql-text"><strong>Services</strong><span>Edit service cards</span></div>
+                        </div>
+                        <div class="quick-link-btn" onclick="showPanel('portfolio')">
+                            <div class="ql-icon">🗂️</div>
+                            <div class="ql-text"><strong>Portfolio</strong><span>Gallery images</span></div>
+                        </div>
+                        <div class="quick-link-btn" onclick="showPanel('awards')">
+                            <div class="ql-icon">🏆</div>
+                            <div class="ql-text"><strong>Awards</strong><span>Award images & captions</span></div>
+                        </div>
+                        <div class="quick-link-btn" onclick="showPanel('partners')">
+                            <div class="ql-icon">🏛️</div>
+                            <div class="ql-text"><strong>Academe Partners</strong><span>Marquee logos</span></div>
+                        </div>
+                        <div class="quick-link-btn" onclick="showPanel('news')">
+                            <div class="ql-icon">📰</div>
+                            <div class="ql-text"><strong>News & Updates</strong><span>News cards & dates</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── ABOUT ME PANEL ── -->
+            <div class="panel" id="panel-about">
+                <div class="panel-header">
+                    <h2>About Me Editor</h2>
+                    <p>Edit the About / Who We Are section content, image, and display settings for the live site.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-title-icon">✍️</div> Text Content</div>
+                        <span class="status-badge badge-live" id="about-save-status">Synced</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Main Headline <span class="required">*</span></label>
+                        <input type="text" id="about-headline" placeholder="e.g., Respected. Experienced. Innovative.">
+                    </div>
+                    <div class="form-group">
+                        <label>Who We Are <span class="hint">— Description paragraph</span><span class="required">*</span></label>
+                        <textarea id="about-desc" rows="5" placeholder="Write your company bio, mission, or operational description..."></textarea>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-title-icon">🖼</div> Featured Image</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Upload Photo</label>
+                        <div class="image-upload-zone" id="upload-zone">
+                            <input type="file" id="about-image-file" accept="image/*">
+                            <span class="upload-icon">📂</span>
+                            <p class="upload-text"><strong>Click to upload</strong> or drag & drop here</p>
+                            <p class="upload-text" style="margin-top:4px;">PNG, JPG, WEBP — max 10 MB</p>
+                        </div>
+                        <div class="image-preview-box" id="img-preview-box">
+                            <img id="image-preview" src="" alt="Preview">
+                        </div>
+                        <div class="image-preview-actions" id="img-actions" style="display:none;">
+                            <button class="btn btn-danger btn-sm" id="remove-image-btn">Remove Image</button>
+                            <span style="font-size: 0.78rem; color: var(--text-muted); align-self: center;">Current image will be replaced on save</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Image Display Width <span class="hint">— controls size on live site</span></label>
+                        <div class="slider-wrapper">
+                            <input type="range" id="img-width-slider" min="20" max="100" value="100" step="5">
+                            <div class="slider-value" id="img-width-label">100%</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Max Width (px) <span class="hint">— optional cap</span></label>
+                            <input type="number" id="img-max-width" placeholder="e.g., 600" min="100" max="2000">
+                        </div>
+                        <div class="form-group">
+                            <label>Max Height (px) <span class="hint">— optional cap</span></label>
+                            <input type="number" id="img-max-height" placeholder="e.g., 400" min="100" max="2000">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Object Fit <span class="hint">— how image fills the container</span></label>
+                        <div class="fit-options">
+                            <div class="fit-opt active" data-fit="cover">Cover</div>
+                            <div class="fit-opt" data-fit="contain">Contain</div>
+                            <div class="fit-opt" data-fit="fill">Fill</div>
+                            <div class="fit-opt" data-fit="none">None / Natural</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Size Preview</label>
+                        <div class="preview-resize-demo" id="size-preview-demo">
+                            <img id="size-preview-img" src="" alt="Size Preview">
+                            <span id="size-preview-placeholder" style="color: var(--text-muted); font-size: 0.85rem;">Upload an image to preview sizing</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                    <button id="save-about-btn" class="btn btn-primary">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        Publish Changes
+                    </button>
+                    <button id="reset-about-btn" class="btn btn-ghost">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                        Reload from Database
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── SERVICES PANEL ── -->
+            <div class="panel" id="panel-services">
+                <div class="panel-header">
+                    <h2>Services Editor</h2>
+                    <p>Edit the service cards shown on the live site. Choose between the <strong>Stack Animation</strong> (scroll-driven cards) or <strong>Card Slider</strong> (prev/next navigation) display mode below.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-title-icon">📋</div> Section Introduction</div>
+                        <span class="status-badge badge-live" id="services-save-status">Synced</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Section Subtitle <span class="hint">— appears above "Our Services"</span></label>
+                        <input type="text" id="services-subtitle" placeholder="e.g., What We Do">
+                    </div>
+                    <div class="form-group">
+                        <label>Section Description <span class="hint">— paragraph below the title</span></label>
+                        <textarea id="services-desc" rows="3" placeholder="Erovoutika is a respected and experienced..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Animation Mode <span class="hint">— how the cards appear on the live site</span></label>
+                        <div style="display:flex; gap:18px; flex-wrap:wrap; padding:6px 2px;">
+                            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:500;">
+                                <input type="radio" name="services-mode" value="stack" id="services-mode-stack" checked>
+                                <span>📚 Stack Animation <span class="hint" style="margin-left:4px;">(scroll-driven)</span></span>
+                            </label>
+                            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:500;">
+                                <input type="radio" name="services-mode" value="slider" id="services-mode-slider">
+                                <span>🎞️ Card Slider <span class="hint" style="margin-left:4px;">(prev/next buttons)</span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-title-icon">⚙️</div> Service Cards</div>
+                        <button class="btn btn-ghost btn-sm" id="add-service-btn">+ Add Card</button>
+                    </div>
+                    <div class="item-list" id="services-list">
+                        <!-- Service rows injected here -->
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px;">
+                    <button id="save-services-btn" class="btn btn-primary">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        Publish Changes
+                    </button>
+                    <button id="reset-services-btn" class="btn btn-ghost">Reload from Database</button>
+                </div>
+            </div>
+
+            <!-- ── PORTFOLIO PANEL ── -->
+            <div class="panel" id="panel-portfolio">
+                <div class="panel-header">
+                    <h2>Portfolio Editor</h2>
+                    <p>Manage the gallery grid images shown in the Portfolio section. Each item has an image URL and alt text.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-title-icon">🖼</div> Gallery Images</div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <span class="status-badge badge-live" id="portfolio-save-status">Synced</span>
+                            <button class="btn btn-ghost btn-sm" id="add-portfolio-btn">+ Add Image</button>
+                        </div>
+                    </div>
+                    <div class="item-list" id="portfolio-list">
+                        <!-- Portfolio rows injected here -->
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px;">
+                    <button id="save-portfolio-btn" class="btn btn-primary">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        Publish Changes
+                    </button>
+                    <button id="reset-portfolio-btn" class="btn btn-ghost">Reload from Database</button>
+                </div>
+            </div>
+
+            <!-- ── AWARDS PANEL ── -->
+            <div class="panel" id="panel-awards">
+                <div class="panel-header">
+                    <h2>Awards & Accreditations Editor</h2>
+                    <p>Edit award images and their captions shown in the Awards section of the live site.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-title-icon">🏆</div> Award Items</div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <span class="status-badge badge-live" id="awards-save-status">Synced</span>
+                            <button class="btn btn-ghost btn-sm" id="add-award-btn">+ Add Award</button>
+                        </div>
+                    </div>
+                    <div class="item-list" id="awards-list">
+                        <!-- Award rows injected here -->
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px;">
+                    <button id="save-awards-btn" class="btn btn-primary">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        Publish Changes
+                    </button>
+                    <button id="reset-awards-btn" class="btn btn-ghost">Reload from Database</button>
+                </div>
+            </div>
+
+            <!-- ── ACADEME PARTNERS PANEL ── -->
+            <div class="panel" id="panel-partners">
+                <div class="panel-header">
+                    <h2>Academe Partners Editor</h2>
+                    <p>Manage the partner and university logos displayed in the scrolling marquee on the live site.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-title-icon">🏛️</div> Partner Logos</div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <span class="status-badge badge-live" id="partners-save-status">Synced</span>
+                            <button class="btn btn-ghost btn-sm" id="add-partner-btn">+ Add Partner</button>
+                        </div>
+                    </div>
+                    <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;">The marquee auto-duplicates all logos for a seamless loop. You only manage the unique set here.</p>
+                    <div class="partner-grid" id="partners-grid">
+                        <!-- Partner cards injected here -->
+                    </div>
+                </div>
+
+                <!-- Add/Edit partner form -->
+                <div class="card" id="partner-form-card" style="display:none;">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-title-icon">➕</div> <span id="partner-form-title">Add Partner</span></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Logo URL <span class="required">*</span></label>
+                            <input type="url" id="partner-url-input" placeholder="https://...">
+                        </div>
+                        <div class="form-group">
+                            <label>Alt Text / Name <span class="required">*</span></label>
+                            <input type="text" id="partner-alt-input" placeholder="e.g., Partner 1">
+                        </div>
+                    </div>
+                    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">Or upload directly:</p>
+                    <div class="mini-upload-zone" id="partner-upload-zone">
+                        <input type="file" id="partner-image-file" accept="image/*">
+                        📂 Click to upload logo image
+                    </div>
+                    <div class="upload-progress" id="partner-upload-progress">
+                        <div class="upload-progress-bar" id="partner-upload-bar"></div>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:1rem;">
+                        <button class="btn btn-primary btn-sm" id="partner-form-save">Save Partner</button>
+                        <button class="btn btn-ghost btn-sm" id="partner-form-cancel">Cancel</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px;">
+                    <button id="save-partners-btn" class="btn btn-primary">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        Publish Changes
+                    </button>
+                    <button id="reset-partners-btn" class="btn btn-ghost">Reload from Database</button>
+                </div>
+            </div>
+
+            <!-- ── NEWS & UPDATES PANEL ── -->
+            <div class="panel" id="panel-news">
+                <div class="panel-header">
+                    <h2>News & Updates Editor</h2>
+                    <p>Edit news cards — each card has an image, date, title, and a "Read More" link shown on the live site.</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><div class="card-title-icon">📰</div> News Cards</div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <span class="status-badge badge-live" id="news-save-status">Synced</span>
+                            <button class="btn btn-ghost btn-sm" id="add-news-btn">+ Add Card</button>
+                        </div>
+                    </div>
+                    <div class="item-list" id="news-list">
+                        <!-- News rows injected here -->
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px;">
+                    <button id="save-news-btn" class="btn btn-primary">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        Publish Changes
+                    </button>
+                    <button id="reset-news-btn" class="btn btn-ghost">Reload from Database</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- ═══════════════════════════════════════
+     FIREBASE + ADMIN LOGIC
+═══════════════════════════════════════ -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+        from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, collection, getDocs, addDoc, updateDoc, deleteDoc }
+        from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+    import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL }
+        from "https://www.gstatic.com/firebasejs/12.12.1/firebase-storage.js";
+
+    // ── CONFIGURATION ──────────────────────
+    const firebaseConfig = {
+        apiKey: "AIzaSyD5GwkaU3qKf-jdG2R7QQyGADuYIPedlkY",
+        authDomain: "erovoutika-cms-b2f23.firebaseapp.com",
+        projectId: "erovoutika-cms-b2f23",
+        storageBucket: "erovoutika-cms-b2f23.firebasestorage.app",
+        messagingSenderId: "1049312061270",
+        appId: "1:1049312061270:web:33458a4547f344160458f7",
+        measurementId: "G-KKEP1LKF0Z"
+    };
+
+    // ⚠️ Authorized Admin Emails
+    const ALLOWED_EMAILS = [
+        "ngbradovan@gmail.com",
+        "khatall2026@gmail.com",
+        "erovoutika@gmail.com"
+    ];
+
+    // ── LIVE SITE URL ──────────────────────
+    const WEBSITE_FILE = "index4(1).html";
+    const LIVE_SITE_URL = "./" + WEBSITE_FILE;
+    document.getElementById('view-live-btn').href = LIVE_SITE_URL;
+    document.getElementById('live-site-link').href = LIVE_SITE_URL;
+
+    // ── INIT FIREBASE ──────────────────────
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    const provider = new GoogleAuthProvider();
+
+    // ── DOM REFS ──────────────────────────
+    const authScreen    = document.getElementById('auth-screen');
+    const adminScreen   = document.getElementById('admin-screen');
+    const loginError    = document.getElementById('login-error');
+    const imagePreview  = document.getElementById('image-preview');
+    const imgPreviewBox = document.getElementById('img-preview-box');
+    const imgActions    = document.getElementById('img-actions');
+    const sizePrevImg   = document.getElementById('size-preview-img');
+    const sizePrevPlaceholder = document.getElementById('size-preview-placeholder');
+
+    let currentImageUrl = "";
+    let newFileSelected = false;
+    let selectedFit = "cover";
+
+    // ── THEME TOGGLE ──────────────────────
+    const html = document.documentElement;
+    const savedTheme = localStorage.getItem('ero-theme') || 'light';
+    html.setAttribute('data-theme', savedTheme);
+
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+        const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('ero-theme', next);
+    });
+
+    // ── SIDEBAR NAVIGATION ────────────────
+    window.showPanel = function(name) {
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('panel-' + name)?.classList.add('active');
+        document.querySelector(`[data-panel="${name}"]`)?.classList.add('active');
+    };
+
+    document.querySelectorAll('.nav-item[data-panel]').forEach(item => {
+        item.addEventListener('click', () => showPanel(item.dataset.panel));
+    });
+
+    // ── AUTH GUARD ────────────────────────
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            if (ALLOWED_EMAILS.includes(user.email.toLowerCase())) {
+                authScreen.style.display = 'none';
+                adminScreen.style.display = 'block';
+                document.getElementById('user-email').textContent = user.email;
+                document.getElementById('user-avatar').textContent = user.email.charAt(0).toUpperCase();
+                // Load all sections
+                await Promise.all([
+                    loadAboutData(),
+                    loadServicesData(),
+                    loadPortfolioData(),
+                    loadAwardsData(),
+                    loadPartnersData(),
+                    loadNewsData()
+                ]);
+                document.getElementById('db-status').textContent = 'Connected';
+                document.getElementById('db-status').className = 'status-badge badge-live';
+            } else {
+                await signOut(auth);
+                loginError.textContent = `Access Denied: ${user.email} is not an authorized administrator.`;
+                loginError.style.display = 'block';
+            }
+        } else {
+            authScreen.style.display = 'flex';
+            adminScreen.style.display = 'none';
+        }
+    });
+
+    document.getElementById('login-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('login-btn');
+        btn.disabled = true;
+        btn.innerHTML = `<div class="spinner" style="border-top-color: white;"></div> Authenticating...`;
+        try {
+            await signInWithPopup(auth, provider);
+        } catch (err) {
+            loginError.textContent = "Sign-in failed. Please try again.";
+            loginError.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Sign in with Google`;
+        }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+
+    // ═══════════════════════════════════════
+    // SECTION: ABOUT ME
+    // Firestore: sections/about
+    // ═══════════════════════════════════════
+    async function loadAboutData() {
+        try {
+            const snap = await getDoc(doc(db, 'sections', 'about'));
+            if (!snap.exists()) return;
+            const data = snap.data();
+
+            document.getElementById('about-headline').value = data.headline || "";
+            document.getElementById('about-desc').value = data.description || "";
+
+            if (data.imageUrl) {
+                currentImageUrl = data.imageUrl;
+                showImagePreview(data.imageUrl);
+            }
+            if (data.imgWidth) {
+                document.getElementById('img-width-slider').value = data.imgWidth;
+                document.getElementById('img-width-label').textContent = data.imgWidth + '%';
+            }
+            if (data.imgMaxWidth) document.getElementById('img-max-width').value = data.imgMaxWidth;
+            if (data.imgMaxHeight) document.getElementById('img-max-height').value = data.imgMaxHeight;
+            if (data.imgFit) {
+                selectedFit = data.imgFit;
+                document.querySelectorAll('.fit-opt').forEach(o => {
+                    o.classList.toggle('active', o.dataset.fit === data.imgFit);
+                });
+            }
+
+            document.getElementById('about-save-status').textContent = 'Synced';
+            document.getElementById('about-save-status').className = 'status-badge badge-live';
+            updateSizePreview();
+        } catch (err) {
+            console.error("Load about error:", err);
+            toast("Failed to load About data", "error");
+        }
+    }
+
+    function showImagePreview(url) {
+        imagePreview.src = url;
+        imgPreviewBox.style.display = 'block';
+        imgActions.style.display = 'flex';
+        sizePrevImg.src = url;
+        sizePrevImg.style.display = 'block';
+        sizePrevPlaceholder.style.display = 'none';
+        updateSizePreview();
+    }
+
+    document.getElementById('about-image-file').addEventListener('change', function () {
+        if (!this.files.length) return;
+        newFileSelected = true;
+        const url = URL.createObjectURL(this.files[0]);
+        showImagePreview(url);
+        document.getElementById('upload-zone').style.borderColor = 'var(--success)';
+    });
+
+    const zone = document.getElementById('upload-zone');
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('drag-over');
+        if (e.dataTransfer.files.length) {
+            document.getElementById('about-image-file').files = e.dataTransfer.files;
+            document.getElementById('about-image-file').dispatchEvent(new Event('change'));
+        }
+    });
+
+    document.getElementById('remove-image-btn').addEventListener('click', () => {
+        imagePreview.src = '';
+        imgPreviewBox.style.display = 'none';
+        imgActions.style.display = 'none';
+        sizePrevImg.style.display = 'none';
+        sizePrevPlaceholder.style.display = 'block';
+        currentImageUrl = '';
+        newFileSelected = false;
+        document.getElementById('about-image-file').value = '';
+        zone.style.borderColor = '';
+    });
+
+    const widthSlider = document.getElementById('img-width-slider');
+    const widthLabel  = document.getElementById('img-width-label');
+
+    widthSlider.addEventListener('input', () => {
+        widthLabel.textContent = widthSlider.value + '%';
+        updateSizePreview();
+    });
+    document.getElementById('img-max-width').addEventListener('input', updateSizePreview);
+    document.getElementById('img-max-height').addEventListener('input', updateSizePreview);
+
+    document.querySelectorAll('.fit-opt').forEach(opt => {
+        opt.addEventListener('click', () => {
+            document.querySelectorAll('.fit-opt').forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            selectedFit = opt.dataset.fit;
+            updateSizePreview();
+        });
+    });
+
+    function updateSizePreview() {
+        const w = widthSlider.value + '%';
+        const mw = document.getElementById('img-max-width').value;
+        const mh = document.getElementById('img-max-height').value;
+        sizePrevImg.style.width = w;
+        sizePrevImg.style.maxWidth = mw ? mw + 'px' : '';
+        sizePrevImg.style.maxHeight = mh ? mh + 'px' : '220px';
+        sizePrevImg.style.objectFit = selectedFit === 'none' ? 'none' : selectedFit;
+        sizePrevImg.style.height = mh ? mh + 'px' : 'auto';
+    }
+
+    document.getElementById('save-about-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('save-about-btn');
+        const headline    = document.getElementById('about-headline').value.trim();
+        const description = document.getElementById('about-desc').value.trim();
+        const fileInput   = document.getElementById('about-image-file');
+        const imgWidth    = widthSlider.value;
+        const imgMaxWidth = document.getElementById('img-max-width').value;
+        const imgMaxHeight = document.getElementById('img-max-height').value;
+
+        if (!headline || !description) return toast("Please fill in both Headline and Description.", "error");
+
+        btn.disabled = true;
+        btn.innerHTML = `<div class="spinner"></div> Publishing...`;
+        document.getElementById('about-save-status').textContent = 'Saving...';
+        document.getElementById('about-save-status').className = 'status-badge badge-draft';
+
+        try {
+            let finalImageUrl = currentImageUrl;
+            if (fileInput.files.length > 0 && newFileSelected) {
+                const file = fileInput.files[0];
+                const sRef = storageRef(storage, `about/${Date.now()}_${file.name}`);
+                const uploadTask = uploadBytesResumable(sRef, file);
+
+                // Use the official state_changed callback pattern instead of
+                // `await uploadTask`. The plain `await` on the UploadTask can
+                // silently hang on some browser/network/SDK combinations,
+                // leaving the Publish button spinning forever. This pattern
+                // lets us show real-time progress, surface errors immediately
+                // through the error callback, and fall back to a hard timeout.
+                const UPLOAD_TIMEOUT_MS = 90_000; // 90 seconds
+                await new Promise((resolve, reject) => {
+                    const timer = setTimeout(() => {
+                        try { uploadTask.cancel(); } catch (_) {}
+                        reject(new Error(
+                            `Upload timed out after ${UPLOAD_TIMEOUT_MS / 1000}s. ` +
+                            `Check your network, Storage rules, or try a smaller image.`
+                        ));
+                    }, UPLOAD_TIMEOUT_MS);
+
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            const pct = snapshot.totalBytes
+                                ? Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
+                                : 0;
+                            btn.innerHTML = `<div class="spinner"></div> Uploading ${pct}%...`;
+                        },
+                        (error) => { clearTimeout(timer); reject(error); },
+                        ()      => { clearTimeout(timer); resolve(); }
+                    );
+                });
+
+                btn.innerHTML = `<div class="spinner"></div> Saving...`;
+                finalImageUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                currentImageUrl = finalImageUrl;
+                newFileSelected = false;
+
+                // Repoint the preview at the published URL so subsequent
+                // text-only saves don't try to re-upload the local blob.
+                if (imagePreview)  imagePreview.src = finalImageUrl;
+                if (sizePrevImg)   sizePrevImg.src = finalImageUrl;
+            }
+
+            await setDoc(doc(db, 'sections', 'about'), {
+                headline, description,
+                imageUrl: finalImageUrl,
+                imgWidth: Number(imgWidth),
+                imgMaxWidth: imgMaxWidth ? Number(imgMaxWidth) : null,
+                imgMaxHeight: imgMaxHeight ? Number(imgMaxHeight) : null,
+                imgFit: selectedFit,
+                updatedAt: new Date().toISOString()
+            });
+
+            document.getElementById('about-save-status').textContent = 'Synced';
+            document.getElementById('about-save-status').className = 'status-badge badge-live';
+            toast("About Me published successfully! ✓", "success");
+            fileInput.value = '';
+            zone.style.borderColor = '';
+
+            // Notify any open live-site tab (index4(1).html) in the same browser
+            // so its Who-We-Are image / text re-hydrates from Firestore without
+            // a manual refresh. Silent no-op when BroadcastChannel is unsupported.
+            try {
+                const bc = new BroadcastChannel('erovoutika-cms');
+                bc.postMessage({ section: 'about', at: Date.now() });
+                bc.close();
+            } catch (_) { /* unsupported — user just refreshes the live site */ }
+        } catch (err) {
+            console.error("Save about error:", err);
+            document.getElementById('about-save-status').textContent = 'Error';
+            document.getElementById('about-save-status').className = 'status-badge badge-draft';
+            toast("Failed to publish About Me. " + (err?.code || err?.message || ''), "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Publish Changes`;
+        }
+    });
+
+    document.getElementById('reset-about-btn').addEventListener('click', async () => {
+        if (!confirm("Reload data from the database? Unsaved changes will be lost.")) return;
+        newFileSelected = false;
+        await loadAboutData();
+        toast("Reloaded from database.", "info");
+    });
+
+    // ═══════════════════════════════════════
+    // SECTION: SERVICES
+    // Firestore: sections/services  (doc with {subtitle, description, cards: []})
+    // ═══════════════════════════════════════
+
+    // Default service cards matching index4(1).html
+    const DEFAULT_SERVICES = [
+        { icon: '🎓', number: '01 — Certifications', title: 'Training &\nCertifications', body: 'Specialized certification for training, learning and development professionals seeking ways to increase business performance through innovative and collaborative training methods.' },
+        { icon: '⚙️', number: '02 — Automation', title: 'Automation\nSolutions', body: 'PLC drivers and industrial communications software products for industrial and process automation — purpose-built for modern manufacturing environments.' },
+        { icon: '🤖', number: '03 — Engineering', title: 'Robotics', body: 'Intersection of science, engineering and technology — producing machines that replicate or substitute for human actions across industries.' },
+        { icon: '🔬', number: '04 — Innovation', title: 'Research &\nDevelopment', body: 'Activities that companies undertake to innovate and introduce new products and services — often the first stage in the development process.' },
+        { icon: '🛡️', number: '05 — Security', title: 'Cybersecurity', body: 'Application of technologies, processes, and controls to protect systems, networks, programs, devices, and data from cyberattacks.' },
+        { icon: '🔗', number: '06 — Decentralized', title: 'Blockchain', body: 'Maintaining a secure and decentralized record of transactions — best known for their crucial role in cryptocurrency systems such as Bitcoin.' }
+    ];
+
+    let servicesData = { subtitle: 'What We Do', description: '', cards: [...DEFAULT_SERVICES], displayMode: 'stack' };
+
+    async function loadServicesData() {
+        try {
+            const snap = await getDoc(doc(db, 'sections', 'services'));
+            if (snap.exists()) servicesData = snap.data();
+            else servicesData = { subtitle: 'What We Do', description: 'Erovoutika is a respected and experienced Automation and Robotics Company. Our highly professional team has been successfully delivering customer needs across industries.', cards: [...DEFAULT_SERVICES], displayMode: 'stack' };
+
+            document.getElementById('services-subtitle').value = servicesData.subtitle || '';
+            document.getElementById('services-desc').value = servicesData.description || '';
+
+            // Animation mode (default 'stack')
+            const mode = (servicesData.displayMode === 'slider') ? 'slider' : 'stack';
+            const modeRadio = document.querySelector(`input[name="services-mode"][value="${mode}"]`);
+            if (modeRadio) modeRadio.checked = true;
+
+            renderServicesList();
+            document.getElementById('services-save-status').textContent = 'Synced';
+            document.getElementById('services-save-status').className = 'status-badge badge-live';
+        } catch (err) {
+            console.error("Load services error:", err);
+            toast("Failed to load Services data", "error");
+        }
+    }
+
+    function renderServicesList() {
+        const list = document.getElementById('services-list');
+        list.innerHTML = '';
+        (servicesData.cards || []).forEach((card, i) => {
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.innerHTML = `
+                <div class="item-row-header">
+                    <span class="item-row-label">Service Card ${i + 1}</span>
+                    <div class="item-row-actions">
+                        <button class="btn btn-danger btn-sm" onclick="removeServiceCard(${i})">Remove</button>
+                    </div>
+                </div>
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label>Icon (emoji)</label>
+                        <input type="text" value="${card.icon || ''}" placeholder="🎓" oninput="updateServiceCard(${i},'icon',this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Number Label</label>
+                        <input type="text" value="${card.number || ''}" placeholder="01 — Certifications" oninput="updateServiceCard(${i},'number',this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Card Title</label>
+                        <input type="text" value="${card.title || ''}" placeholder="Training & Certifications" oninput="updateServiceCard(${i},'title',this.value)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea rows="3" placeholder="Service description..." oninput="updateServiceCard(${i},'body',this.value)">${card.body || ''}</textarea>
+                </div>
+            `;
+            list.appendChild(row);
+        });
+    }
+
+    window.updateServiceCard = (i, field, val) => { servicesData.cards[i][field] = val; };
+    window.removeServiceCard = (i) => {
+        if (!confirm("Remove this service card?")) return;
+        servicesData.cards.splice(i, 1);
+        renderServicesList();
+    };
+
+    document.getElementById('add-service-btn').addEventListener('click', () => {
+        servicesData.cards.push({ icon: '⭐', number: `0${servicesData.cards.length + 1} — New`, title: 'New Service', body: '' });
+        renderServicesList();
+        // Scroll to last item
+        const list = document.getElementById('services-list');
+        list.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    document.getElementById('save-services-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('save-services-btn');
+        const subtitle = document.getElementById('services-subtitle').value.trim();
+        const description = document.getElementById('services-desc').value.trim();
+        const modeRadio = document.querySelector('input[name="services-mode"]:checked');
+        const displayMode = modeRadio ? modeRadio.value : 'stack';
+
+        if (!subtitle) return toast("Please fill in the Section Subtitle.", "error");
+        if (servicesData.cards.some(c => !c.title.trim())) return toast("All service cards must have a title.", "error");
+
+        servicesData.subtitle = subtitle;
+        servicesData.description = description;
+        servicesData.displayMode = displayMode;
+
+        btn.disabled = true;
+        btn.innerHTML = `<div class="spinner"></div> Publishing...`;
+        document.getElementById('services-save-status').textContent = 'Saving...';
+        document.getElementById('services-save-status').className = 'status-badge badge-draft';
+
+        try {
+            await setDoc(doc(db, 'sections', 'services'), {
+                ...servicesData,
+                updatedAt: new Date().toISOString()
+            });
+            document.getElementById('services-save-status').textContent = 'Synced';
+            document.getElementById('services-save-status').className = 'status-badge badge-live';
+            toast("Services published successfully! ✓", "success");
+        } catch (err) {
+            console.error("Save services error:", err);
+            document.getElementById('services-save-status').textContent = 'Error';
+            document.getElementById('services-save-status').className = 'status-badge badge-draft';
+            toast("Failed to publish Services.", "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Publish Changes`;
+        }
+    });
+
+    document.getElementById('reset-services-btn').addEventListener('click', async () => {
+        if (!confirm("Reload Services from the database? Unsaved changes will be lost.")) return;
+        await loadServicesData();
+        toast("Reloaded from database.", "info");
+    });
+
+    // ═══════════════════════════════════════
+    // SECTION: PORTFOLIO
+    // Firestore: sections/portfolio  (doc with {items: [{imageUrl, alt}]})
+    // ═══════════════════════════════════════
+
+    const DEFAULT_PORTFOLIO = [
+        { imageUrl: 'https://erovoutika.ph/assets/images/porfolio/Tempo/auto-2.webp', alt: 'Automation' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/porfolio/robotics/robotic2.webp', alt: 'Robotics' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/porfolio/Trainings/training1.webp', alt: 'Training' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/porfolio/robotics/robotic4.webp', alt: 'Robotics 4' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/porfolio/Tempo/auto-5.webp', alt: 'Automation 5' }
+    ];
+
+    let portfolioData = { items: [...DEFAULT_PORTFOLIO] };
+    // Track newly selected files per portfolio row: {index: File}
+    let portfolioFiles = {};
+
+    async function loadPortfolioData() {
+        try {
+            const snap = await getDoc(doc(db, 'sections', 'portfolio'));
+            portfolioData = snap.exists() ? snap.data() : { items: [...DEFAULT_PORTFOLIO] };
+            portfolioFiles = {};
+            renderPortfolioList();
+            document.getElementById('portfolio-save-status').textContent = 'Synced';
+            document.getElementById('portfolio-save-status').className = 'status-badge badge-live';
+        } catch (err) {
+            console.error("Load portfolio error:", err);
+            toast("Failed to load Portfolio data", "error");
+        }
+    }
+
+    function renderPortfolioList() {
+        const list = document.getElementById('portfolio-list');
+        list.innerHTML = '';
+        (portfolioData.items || []).forEach((item, i) => {
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.innerHTML = `
+                <div class="item-row-header">
+                    <span class="item-row-label">Gallery Image ${i + 1}</span>
+                    <div class="item-row-actions">
+                        <button class="btn btn-danger btn-sm" onclick="removePortfolioItem(${i})">Remove</button>
+                    </div>
+                </div>
+                <div class="item-thumb-wrap">
+                    <div>
+                        <img class="item-thumb" id="port-thumb-${i}" src="${item.imageUrl || ''}" alt="${item.alt || ''}" onerror="this.src=''">
+                        <div class="mini-upload-zone" style="margin-top:6px;width:60px;font-size:0.7rem;padding:4px 6px;">
+                            <input type="file" accept="image/*" onchange="handlePortfolioFileSelect(${i}, this)">
+                            Upload
+                        </div>
+                    </div>
+                    <div class="fields">
+                        <div class="form-group">
+                            <label>Image URL</label>
+                            <input type="url" value="${item.imageUrl || ''}" placeholder="https://..." oninput="updatePortfolioItem(${i},'imageUrl',this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Alt Text</label>
+                            <input type="text" value="${item.alt || ''}" placeholder="e.g., Automation" oninput="updatePortfolioItem(${i},'alt',this.value)">
+                        </div>
+                    </div>
+                </div>
+            `;
+            list.appendChild(row);
+        });
+    }
+
+    window.handlePortfolioFileSelect = (i, input) => {
+        if (!input.files.length) return;
+        portfolioFiles[i] = input.files[0];
+        const url = URL.createObjectURL(input.files[0]);
+        const thumb = document.getElementById(`port-thumb-${i}`);
+        if (thumb) thumb.src = url;
+        toast(`Image selected for item ${i + 1}. Click Publish to upload.`, "info");
+    };
+
+    window.updatePortfolioItem = (i, field, val) => {
+        portfolioData.items[i][field] = val;
+        if (field === 'imageUrl') {
+            const thumb = document.getElementById(`port-thumb-${i}`);
+            if (thumb) thumb.src = val;
+        }
+    };
+
+    window.removePortfolioItem = (i) => {
+        if (!confirm("Remove this portfolio image?")) return;
+        portfolioData.items.splice(i, 1);
+        delete portfolioFiles[i];
+        // Re-key portfolioFiles after splice
+        const newFiles = {};
+        Object.keys(portfolioFiles).forEach(k => {
+            const nk = Number(k);
+            if (nk > i) newFiles[nk - 1] = portfolioFiles[k];
+            else if (nk < i) newFiles[nk] = portfolioFiles[k];
+        });
+        portfolioFiles = newFiles;
+        renderPortfolioList();
+    };
+
+    document.getElementById('add-portfolio-btn').addEventListener('click', () => {
+        portfolioData.items.push({ imageUrl: '', alt: '' });
+        renderPortfolioList();
+        document.getElementById('portfolio-list').lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    document.getElementById('save-portfolio-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('save-portfolio-btn');
+        const statusBadge = document.getElementById('portfolio-save-status');
+
+        // Validate BEFORE uploading — every row must have either an existing
+        // imageUrl OR a pending file selected for upload.
+        const missing = portfolioData.items.findIndex(
+            (item, i) => !((item.imageUrl || '').trim()) && !portfolioFiles[i]
+        );
+        if (missing !== -1) {
+            return toast(`Portfolio image ${missing + 1} needs an image URL or an uploaded file.`, "error");
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = `<div class="spinner"></div> Publishing...`;
+        statusBadge.textContent = 'Saving...';
+        statusBadge.className = 'status-badge badge-draft';
+
+        try {
+            // Upload any pending files
+            for (const [idxStr, file] of Object.entries(portfolioFiles)) {
+                const i = Number(idxStr);
+                const sRef = storageRef(storage, `portfolio/${Date.now()}_${file.name}`);
+                const task = await uploadBytesResumable(sRef, file);
+                const url = await getDownloadURL(task.ref);
+                portfolioData.items[i].imageUrl = url;
+            }
+            portfolioFiles = {};
+
+            await setDoc(doc(db, 'sections', 'portfolio'), {
+                items: portfolioData.items,
+                updatedAt: new Date().toISOString()
+            });
+            renderPortfolioList(); // refresh thumbnails with final URLs
+            statusBadge.textContent = 'Synced';
+            statusBadge.className = 'status-badge badge-live';
+            toast("Portfolio published successfully! ✓", "success");
+        } catch (err) {
+            console.error("Save portfolio error:", err);
+            statusBadge.textContent = 'Error';
+            statusBadge.className = 'status-badge badge-draft';
+            toast("Failed to publish Portfolio. " + (err?.code || err?.message || ''), "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Publish Changes`;
+        }
+    });
+
+    document.getElementById('reset-portfolio-btn').addEventListener('click', async () => {
+        if (!confirm("Reload Portfolio from the database? Unsaved changes will be lost.")) return;
+        await loadPortfolioData();
+        toast("Reloaded from database.", "info");
+    });
+
+    // ═══════════════════════════════════════
+    // SECTION: AWARDS
+    // Firestore: sections/awards  (doc with {items: [{imageUrl, alt, caption}]})
+    // ═══════════════════════════════════════
+
+    const DEFAULT_AWARDS = [
+        { imageUrl: 'https://erovoutika.ph/assets/images/awards/award1.webp', alt: 'PESMS', caption: 'PESMS Best Choice Awardee 2020–2021' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/awards/award2.webp', alt: 'CompTIA', caption: 'CompTIA Authorized Partner' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/awards/award3.webp', alt: 'Q Asia', caption: 'Q Asia Quality Excellence Awardee 2020–2021' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/awards/award4.webp', alt: 'CPD', caption: 'CPD Provider Accreditation ECE-2022-014' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/awards/award5.webp', alt: 'PSMA', caption: 'Philippine Social Media Awards Star Brand 2020' }
+    ];
+
+    let awardsData = { items: [...DEFAULT_AWARDS] };
+    let awardsFiles = {};
+
+    async function loadAwardsData() {
+        try {
+            const snap = await getDoc(doc(db, 'sections', 'awards'));
+            awardsData = snap.exists() ? snap.data() : { items: [...DEFAULT_AWARDS] };
+            awardsFiles = {};
+            renderAwardsList();
+            document.getElementById('awards-save-status').textContent = 'Synced';
+            document.getElementById('awards-save-status').className = 'status-badge badge-live';
+        } catch (err) {
+            console.error("Load awards error:", err);
+            toast("Failed to load Awards data", "error");
+        }
+    }
+
+    function renderAwardsList() {
+        const list = document.getElementById('awards-list');
+        list.innerHTML = '';
+        (awardsData.items || []).forEach((item, i) => {
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.innerHTML = `
+                <div class="item-row-header">
+                    <span class="item-row-label">Award ${i + 1}</span>
+                    <div class="item-row-actions">
+                        <button class="btn btn-danger btn-sm" onclick="removeAwardItem(${i})">Remove</button>
+                    </div>
+                </div>
+                <div class="item-thumb-wrap">
+                    <div>
+                        <img class="item-thumb" id="award-thumb-${i}" src="${item.imageUrl || ''}" alt="${item.alt || ''}" onerror="this.src=''">
+                        <div class="mini-upload-zone" style="margin-top:6px;width:60px;font-size:0.7rem;padding:4px 6px;">
+                            <input type="file" accept="image/*" onchange="handleAwardFileSelect(${i}, this)">
+                            Upload
+                        </div>
+                    </div>
+                    <div class="fields">
+                        <div class="form-group">
+                            <label>Image URL</label>
+                            <input type="url" value="${item.imageUrl || ''}" placeholder="https://..." oninput="updateAwardItem(${i},'imageUrl',this.value)">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Alt Text</label>
+                                <input type="text" value="${item.alt || ''}" placeholder="e.g., PESMS" oninput="updateAwardItem(${i},'alt',this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label>Caption</label>
+                                <input type="text" value="${item.caption || ''}" placeholder="Award description..." oninput="updateAwardItem(${i},'caption',this.value)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            list.appendChild(row);
+        });
+    }
+
+    window.handleAwardFileSelect = (i, input) => {
+        if (!input.files.length) return;
+        awardsFiles[i] = input.files[0];
+        const thumb = document.getElementById(`award-thumb-${i}`);
+        if (thumb) thumb.src = URL.createObjectURL(input.files[0]);
+        toast(`Award image selected for item ${i + 1}. Click Publish to upload.`, "info");
+    };
+
+    window.updateAwardItem = (i, field, val) => {
+        awardsData.items[i][field] = val;
+        if (field === 'imageUrl') {
+            const thumb = document.getElementById(`award-thumb-${i}`);
+            if (thumb) thumb.src = val;
+        }
+    };
+
+    window.removeAwardItem = (i) => {
+        if (!confirm("Remove this award?")) return;
+        awardsData.items.splice(i, 1);
+        delete awardsFiles[i];
+        const newFiles = {};
+        Object.keys(awardsFiles).forEach(k => {
+            const nk = Number(k);
+            if (nk > i) newFiles[nk - 1] = awardsFiles[k];
+            else if (nk < i) newFiles[nk] = awardsFiles[k];
+        });
+        awardsFiles = newFiles;
+        renderAwardsList();
+    };
+
+    document.getElementById('add-award-btn').addEventListener('click', () => {
+        awardsData.items.push({ imageUrl: '', alt: '', caption: '' });
+        renderAwardsList();
+        document.getElementById('awards-list').lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    document.getElementById('save-awards-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('save-awards-btn');
+        const statusBadge = document.getElementById('awards-save-status');
+
+        // Validate BEFORE upload
+        const missingImg = awardsData.items.findIndex(
+            (item, i) => !((item.imageUrl || '').trim()) && !awardsFiles[i]
+        );
+        if (missingImg !== -1) {
+            return toast(`Award ${missingImg + 1} needs an image URL or an uploaded file.`, "error");
+        }
+        const missingCap = awardsData.items.findIndex(item => !((item.caption || '').trim()));
+        if (missingCap !== -1) {
+            return toast(`Award ${missingCap + 1} needs a caption.`, "error");
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = `<div class="spinner"></div> Publishing...`;
+        statusBadge.textContent = 'Saving...';
+        statusBadge.className = 'status-badge badge-draft';
+
+        try {
+            for (const [idxStr, file] of Object.entries(awardsFiles)) {
+                const i = Number(idxStr);
+                const sRef = storageRef(storage, `awards/${Date.now()}_${file.name}`);
+                const task = await uploadBytesResumable(sRef, file);
+                awardsData.items[i].imageUrl = await getDownloadURL(task.ref);
+            }
+            awardsFiles = {};
+
+            await setDoc(doc(db, 'sections', 'awards'), {
+                items: awardsData.items,
+                updatedAt: new Date().toISOString()
+            });
+            renderAwardsList();
+            statusBadge.textContent = 'Synced';
+            statusBadge.className = 'status-badge badge-live';
+            toast("Awards published successfully! ✓", "success");
+        } catch (err) {
+            console.error("Save awards error:", err);
+            statusBadge.textContent = 'Error';
+            statusBadge.className = 'status-badge badge-draft';
+            toast("Failed to publish Awards. " + (err?.code || err?.message || ''), "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Publish Changes`;
+        }
+    });
+
+    document.getElementById('reset-awards-btn').addEventListener('click', async () => {
+        if (!confirm("Reload Awards from the database? Unsaved changes will be lost.")) return;
+        await loadAwardsData();
+        toast("Reloaded from database.", "info");
+    });
+
+    // ═══════════════════════════════════════
+    // SECTION: ACADEME PARTNERS
+    // Firestore: sections/partners  (doc with {items: [{imageUrl, alt}]})
+    // ═══════════════════════════════════════
+
+    const DEFAULT_PARTNERS = [
+        { imageUrl: 'https://erovoutika.ph/assets/images/clients/client-1.webp', alt: 'Partner 1' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/clients/client-2.webp', alt: 'Partner 2' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/clients/client-3.webp', alt: 'Partner 3' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/clients/client-4.webp', alt: 'Partner 4' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/clients/client-5.webp', alt: 'Partner 5' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/clients/client-6.webp', alt: 'Partner 6' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo1.webp', alt: 'Univ 1' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo2.webp', alt: 'Univ 2' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo3.webp', alt: 'Univ 3' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo4.webp', alt: 'Univ 4' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo5.webp', alt: 'Univ 5' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo6.webp', alt: 'Univ 6' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo7.webp', alt: 'Univ 7' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/logo/universities-logo/univ-logo8.webp', alt: 'Univ 8' }
+    ];
+
+    let partnersData = { items: [...DEFAULT_PARTNERS] };
+    let partnerEditingIndex = -1; // -1 = new
+
+    async function loadPartnersData() {
+        try {
+            const snap = await getDoc(doc(db, 'sections', 'partners'));
+            partnersData = snap.exists() ? snap.data() : { items: [...DEFAULT_PARTNERS] };
+            renderPartnersGrid();
+            document.getElementById('partners-save-status').textContent = 'Synced';
+            document.getElementById('partners-save-status').className = 'status-badge badge-live';
+        } catch (err) {
+            console.error("Load partners error:", err);
+            toast("Failed to load Partners data", "error");
+        }
+    }
+
+    function renderPartnersGrid() {
+        const grid = document.getElementById('partners-grid');
+        grid.innerHTML = '';
+        (partnersData.items || []).forEach((item, i) => {
+            const div = document.createElement('div');
+            div.className = 'partner-item';
+            div.innerHTML = `
+                <img src="${item.imageUrl}" alt="${item.alt}" onerror="this.src=''">
+                <div class="partner-item-name">${item.alt}</div>
+                <button class="partner-remove" onclick="removePartner(${i})" title="Remove">✕</button>
+            `;
+            div.addEventListener('dblclick', () => openPartnerForm(i));
+            grid.appendChild(div);
+        });
+    }
+
+    window.removePartner = (i) => {
+        if (!confirm("Remove this partner?")) return;
+        partnersData.items.splice(i, 1);
+        renderPartnersGrid();
+    };
+
+    function openPartnerForm(editIndex = -1) {
+        partnerEditingIndex = editIndex;
+        const formCard = document.getElementById('partner-form-card');
+        formCard.style.display = 'block';
+        document.getElementById('partner-form-title').textContent = editIndex >= 0 ? 'Edit Partner' : 'Add Partner';
+
+        if (editIndex >= 0) {
+            const item = partnersData.items[editIndex];
+            document.getElementById('partner-url-input').value = item.imageUrl || '';
+            document.getElementById('partner-alt-input').value = item.alt || '';
+        } else {
+            document.getElementById('partner-url-input').value = '';
+            document.getElementById('partner-alt-input').value = '';
+        }
+        document.getElementById('partner-image-file').value = '';
+        formCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    document.getElementById('add-partner-btn').addEventListener('click', () => openPartnerForm(-1));
+
+    document.getElementById('partner-form-cancel').addEventListener('click', () => {
+        document.getElementById('partner-form-card').style.display = 'none';
+    });
+
+    // Handle partner image upload in the form
+    document.getElementById('partner-image-file').addEventListener('change', async function () {
+        if (!this.files.length) return;
+        const file = this.files[0];
+        const progress = document.getElementById('partner-upload-progress');
+        const bar = document.getElementById('partner-upload-bar');
+        progress.style.display = 'block';
+
+        try {
+            const sRef = storageRef(storage, `partners/${Date.now()}_${file.name}`);
+            const uploadTask = uploadBytesResumable(sRef, file);
+
+            uploadTask.on('state_changed', snapshot => {
+                const pct = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                bar.style.width = pct + '%';
+            });
+
+            const finalSnap = await uploadTask;
+            const url = await getDownloadURL(finalSnap.ref);
+            document.getElementById('partner-url-input').value = url;
+            toast("Logo uploaded!", "success");
+        } catch (err) {
+            console.error("Partner upload error:", err);
+            toast("Upload failed. " + (err?.code || err?.message || ''), "error");
+        } finally {
+            progress.style.display = 'none';
+            bar.style.width = '0';
+        }
+    });
+
+    document.getElementById('partner-form-save').addEventListener('click', () => {
+        const url = document.getElementById('partner-url-input').value.trim();
+        const alt = document.getElementById('partner-alt-input').value.trim();
+        if (!url || !alt) return toast("Both logo URL and alt text are required.", "error");
+
+        if (partnerEditingIndex >= 0) {
+            partnersData.items[partnerEditingIndex] = { imageUrl: url, alt };
+        } else {
+            partnersData.items.push({ imageUrl: url, alt });
+        }
+
+        renderPartnersGrid();
+        document.getElementById('partner-form-card').style.display = 'none';
+        toast(partnerEditingIndex >= 0 ? "Partner updated." : "Partner added.", "success");
+    });
+
+    document.getElementById('save-partners-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('save-partners-btn');
+        btn.disabled = true;
+        btn.innerHTML = `<div class="spinner"></div> Publishing...`;
+        document.getElementById('partners-save-status').textContent = 'Saving...';
+        document.getElementById('partners-save-status').className = 'status-badge badge-draft';
+
+        try {
+            await setDoc(doc(db, 'sections', 'partners'), {
+                items: partnersData.items,
+                updatedAt: new Date().toISOString()
+            });
+            document.getElementById('partners-save-status').textContent = 'Synced';
+            document.getElementById('partners-save-status').className = 'status-badge badge-live';
+            toast("Academe Partners published successfully! ✓", "success");
+        } catch (err) {
+            console.error("Save partners error:", err);
+            document.getElementById('partners-save-status').textContent = 'Error';
+            document.getElementById('partners-save-status').className = 'status-badge badge-draft';
+            toast("Failed to publish Partners.", "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Publish Changes`;
+        }
+    });
+
+    document.getElementById('reset-partners-btn').addEventListener('click', async () => {
+        if (!confirm("Reload Partners from the database? Unsaved changes will be lost.")) return;
+        document.getElementById('partner-form-card').style.display = 'none';
+        await loadPartnersData();
+        toast("Reloaded from database.", "info");
+    });
+
+    // ═══════════════════════════════════════
+    // SECTION: NEWS & UPDATES
+    // Firestore: sections/news  (doc with {items: [{imageUrl, alt, date, title, link}]})
+    // ═══════════════════════════════════════
+
+    const DEFAULT_NEWS = [
+        { imageUrl: 'https://erovoutika.ph/assets/images/hero_carousel/romania.webp', alt: 'Romania', date: 'April 20–22, 2023', title: 'Team Philippines Goes to Romania for International Robotics Championship', link: 'https://erovoutika.ph/readmore.php' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/hero_carousel/congrats.webp', alt: 'Interns', date: 'May 06, 2023', title: 'Congratulations to Our Former Engineering Interns — 89 Passers!', link: 'https://www.facebook.com/erovoutika' },
+        { imageUrl: 'https://erovoutika.ph/assets/images/porfolio/robotics/robotic6.webp', alt: 'Robolution', date: 'Coming Soon', title: 'ROBOLUTION 2023 — 2nd Edition. Watch This Space.', link: 'https://www.facebook.com/erovoutika' }
+    ];
+
+    let newsData = { items: [...DEFAULT_NEWS] };
+    let newsFiles = {};
+
+    async function loadNewsData() {
+        try {
+            const snap = await getDoc(doc(db, 'sections', 'news'));
+            newsData = snap.exists() ? snap.data() : { items: [...DEFAULT_NEWS] };
+            newsFiles = {};
+            renderNewsList();
+            document.getElementById('news-save-status').textContent = 'Synced';
+            document.getElementById('news-save-status').className = 'status-badge badge-live';
+        } catch (err) {
+            console.error("Load news error:", err);
+            toast("Failed to load News data", "error");
+        }
+    }
+
+    function renderNewsList() {
+        const list = document.getElementById('news-list');
+        list.innerHTML = '';
+        (newsData.items || []).forEach((item, i) => {
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.innerHTML = `
+                <div class="item-row-header">
+                    <span class="item-row-label">News Card ${i + 1}</span>
+                    <div class="item-row-actions">
+                        <button class="btn btn-danger btn-sm" onclick="removeNewsItem(${i})">Remove</button>
+                    </div>
+                </div>
+                <div class="item-thumb-wrap">
+                    <div>
+                        <img class="item-thumb" id="news-thumb-${i}" src="${item.imageUrl || ''}" alt="${item.alt || ''}" onerror="this.src=''">
+                        <div class="mini-upload-zone" style="margin-top:6px;width:60px;font-size:0.7rem;padding:4px 6px;">
+                            <input type="file" accept="image/*" onchange="handleNewsFileSelect(${i}, this)">
+                            Upload
+                        </div>
+                    </div>
+                    <div class="fields">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Image URL</label>
+                                <input type="url" value="${item.imageUrl || ''}" placeholder="https://..." oninput="updateNewsItem(${i},'imageUrl',this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label>Alt Text</label>
+                                <input type="text" value="${item.alt || ''}" placeholder="e.g., Romania" oninput="updateNewsItem(${i},'alt',this.value)">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Date <span class="required">*</span></label>
+                                <input type="text" value="${item.date || ''}" placeholder="e.g., May 06, 2023" oninput="updateNewsItem(${i},'date',this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label>Read More Link</label>
+                                <input type="url" value="${item.link || ''}" placeholder="https://..." oninput="updateNewsItem(${i},'link',this.value)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Headline / Title <span class="required">*</span></label>
+                            <input type="text" value="${item.title || ''}" placeholder="News headline..." oninput="updateNewsItem(${i},'title',this.value)">
+                        </div>
+                    </div>
+                </div>
+            `;
+            list.appendChild(row);
+        });
+    }
+
+    window.handleNewsFileSelect = (i, input) => {
+        if (!input.files.length) return;
+        newsFiles[i] = input.files[0];
+        const thumb = document.getElementById(`news-thumb-${i}`);
+        if (thumb) thumb.src = URL.createObjectURL(input.files[0]);
+        toast(`News image selected for card ${i + 1}. Click Publish to upload.`, "info");
+    };
+
+    window.updateNewsItem = (i, field, val) => {
+        newsData.items[i][field] = val;
+        if (field === 'imageUrl') {
+            const thumb = document.getElementById(`news-thumb-${i}`);
+            if (thumb) thumb.src = val;
+        }
+    };
+
+    window.removeNewsItem = (i) => {
+        if (!confirm("Remove this news card?")) return;
+        newsData.items.splice(i, 1);
+        delete newsFiles[i];
+        const newFiles = {};
+        Object.keys(newsFiles).forEach(k => {
+            const nk = Number(k);
+            if (nk > i) newFiles[nk - 1] = newsFiles[k];
+            else if (nk < i) newFiles[nk] = newsFiles[k];
+        });
+        newsFiles = newFiles;
+        renderNewsList();
+    };
+
+    document.getElementById('add-news-btn').addEventListener('click', () => {
+        newsData.items.push({ imageUrl: '', alt: '', date: '', title: '', link: '' });
+        renderNewsList();
+        document.getElementById('news-list').lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    document.getElementById('save-news-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('save-news-btn');
+        const statusBadge = document.getElementById('news-save-status');
+
+        // Validate BEFORE upload (title + date required; image optional)
+        const missingTitle = newsData.items.findIndex(item => !((item.title || '').trim()));
+        if (missingTitle !== -1) {
+            return toast(`News card ${missingTitle + 1} needs a title.`, "error");
+        }
+        const missingDate = newsData.items.findIndex(item => !((item.date || '').trim()));
+        if (missingDate !== -1) {
+            return toast(`News card ${missingDate + 1} needs a date.`, "error");
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = `<div class="spinner"></div> Publishing...`;
+        statusBadge.textContent = 'Saving...';
+        statusBadge.className = 'status-badge badge-draft';
+
+        try {
+            // Upload any pending news images
+            for (const [idxStr, file] of Object.entries(newsFiles)) {
+                const i = Number(idxStr);
+                const sRef = storageRef(storage, `news/${Date.now()}_${file.name}`);
+                const task = await uploadBytesResumable(sRef, file);
+                newsData.items[i].imageUrl = await getDownloadURL(task.ref);
+            }
+            newsFiles = {};
+
+            await setDoc(doc(db, 'sections', 'news'), {
+                items: newsData.items,
+                updatedAt: new Date().toISOString()
+            });
+            renderNewsList();
+            statusBadge.textContent = 'Synced';
+            statusBadge.className = 'status-badge badge-live';
+            toast("News & Updates published successfully! ✓", "success");
+        } catch (err) {
+            console.error("Save news error:", err);
+            statusBadge.textContent = 'Error';
+            statusBadge.className = 'status-badge badge-draft';
+            toast("Failed to publish News & Updates. " + (err?.code || err?.message || ''), "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Publish Changes`;
+        }
+    });
+
+    document.getElementById('reset-news-btn').addEventListener('click', async () => {
+        if (!confirm("Reload News from the database? Unsaved changes will be lost.")) return;
+        await loadNewsData();
+        toast("Reloaded from database.", "info");
+    });
+
+    // ── TOAST SYSTEM ──────────────────────
+    function toast(message, type = "info") {
+        const icons = { success: "✅", error: "❌", info: "ℹ️" };
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.innerHTML = `<span class="toast-icon">${icons[type]}</span> ${message}`;
+        document.getElementById('toast-container').appendChild(el);
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => el.classList.add('show'));
+        });
+        setTimeout(() => {
+            el.classList.remove('show');
+            setTimeout(() => el.remove(), 400);
+        }, 4500);
+    }
+</script>
+</body>
+</html>
